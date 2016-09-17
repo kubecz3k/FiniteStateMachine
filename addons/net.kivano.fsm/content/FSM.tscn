@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=1]
+
+[ext_resource path="res://addons/net.kivano.fsm/content/fsm.gd" type="Script" id=1]
+
+[node name="FSM" type="Node"]
+
+script/script = ExtResource( 1 )
+__meta__ = { "__editor_plugin_screen__":"Script" }
+path2LogicRoot = NodePath("..")
+onlyActiveStateOnTheScene = true
+transitionsHardcodedInStates = true
+initManually = false
+updateMode = 1
+"Initial state:" = ""
+"Create new State/Subdirectory for states" = "FSM"
+"Create new State/Create state with name:" = null
+
+
