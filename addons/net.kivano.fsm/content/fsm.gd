@@ -52,7 +52,8 @@ extends Node
 #        used in every game tick, but should use it only if you are using 
 #        updateMode="Manual".
 
-
+#
+var StateScn = preload("res://addons/net.kivano.fsm/content/FSMState.gd");
 ##################################################################################
 #########                       Signals definitions                      #########
 ##################################################################################
@@ -61,6 +62,11 @@ signal stateChanged(newStateID, oldStateID);
 ##################################################################################
 #####  Variables (Constants, Export Variables, Node Vars, Normal variables)  #####
 ######################### var myvar setget myvar_set,myvar_get ###################
+
+#you can use this dictionary to access state id. Using is is recommended because it's less error prone than 
+#entering states ids by hand. ex. fsm.set_state(fsm.STATE.START) <- when one of your states is named 'START')
+var STATE = {"":""};
+
 const UPDATE_MODE_MANUAL = 0;
 const UPDATE_MODE_PROCESS = 1;
 const UPDATE_MODE_FIXED_PROCESS = 2;
@@ -98,6 +104,7 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 	for state2Add in states2Add:
 		if(state2Add extends preload("FSMState.gd")):
 			states[state2Add.get_name()] = state2Add;
+			STATE[state2Add.get_name()] = state2Add.get_name();
 			if(!get_tree().is_editor_hint()):
 				state2Add.logicRoot = get_node(path2LogicRoot);
 				state2Add.fsm = self;
@@ -119,7 +126,7 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 		currentStateID = currentState.get_name();
 	
 	#
-	currentState.enter();
+	currentState.enter(); 
 	
 	#
 	initUpdateMode();
@@ -192,7 +199,7 @@ func setOnlyActiveStateOnScene(inVal):
 func update(inDeltaTime, param1=null, param2=null, param3=null, param4=null):
 	if(transitionsHardcodedInStates):
 		var nextStateID = currentState.computeNextState();
-		assert(typeof(nextStateID)==TYPE_STRING);  #ERROR: currentState.computeNextState() is not returning String!" Take a look at currentStateID variable in debugger
+		assert((typeof(nextStateID)==TYPE_STRING));  #ERROR: currentState.computeNextState() is not returning String!" Take a look at currentStateID variable in debugger
 		if(nextStateID!=currentStateID):
 			setState(nextStateID);
 	stateTime += inDeltaTime;
