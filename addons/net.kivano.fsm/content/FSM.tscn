@@ -5,14 +5,12 @@
 [node name="FSM" type="Node"]
 
 script/script = ExtResource( 1 )
-__meta__ = { "__editor_plugin_screen__":"Script" }
-path2LogicRoot = NodePath("..")
-onlyActiveStateOnTheScene = true
-transitionsHardcodedInStates = true
-initManually = false
-updateMode = 1
-"Initial state:" = ""
-"Create new State/Subdirectory for states" = "FSM"
-"Create new State/Create state with name:" = null
+__meta__ = {
+"__editor_plugin_screen__": "Script"
+}
+
+[node name="States" type="Node" parent="."]
+
+[node name="Transitions" type="Node" parent="."]
 
 

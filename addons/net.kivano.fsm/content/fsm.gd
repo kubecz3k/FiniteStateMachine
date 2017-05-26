@@ -1,8 +1,12 @@
 tool
 extends Node
 ##################################### README  ###############################
+#
+# * To create new state check  "Create New:" subsection in FSM inspector 
 # 
-# * Exported Variables which are intended to be used by users:
+# * Dont be afraid to check FSM script to check available methods 
+#
+# * Exported Variables of FSM which are intended to be used by users:
 #
 #     NodePath path2LogicRoot: states usually perform logic based on variables in
 #         some external node, like 'Enemy'. This variable usually points to this node. 
@@ -10,9 +14,6 @@ extends Node
 #
 #     bool onlyActiveStateOnTheScene: if this is true, then only active state is present
 #         on scene tree. It might be handy if states have visual representation
-#
-#     bool transitionsHardcodedInStates: if this is true, then State.computeNextState() 
-#         must be ovverriden to always return next state name (it can return self.get_name())
 #
 #     bool initManually: #you can set this to true to set export vars in runtime from code,
 #         before you will be able to use this FSM you will need to run init() function. 
@@ -43,14 +44,22 @@ extends Node
 #     getState(): return node with current state  
 #
 #     changeStateTo(inNewStateID): can be used to change state. 
-#        Usually dont need to be used when state transitions are 
-#        hardcoded into states( transitionsHardcodedInStates = true)
+#        Usually dont need to be used if you are using graph to link your states
 #      
 #     stateTime(): returns how long current state is active
 #
 #     update(inDeltaTime): update FSM to update current state. Should be
 #        used in every game tick, but should use it only if you are using 
 #        updateMode="Manual".
+#
+#    init(): use only if initManually = true. You will be able to pass additional arguments
+#        to your states and transitions
+#
+#
+################
+# * Members that are intended to be used by users:
+#    STATE: you can use this dictionary to access state id. Using is is recommended because it's less error prone than 
+#        entering states ids by hand. ex. fsm.changeStateTo(fsm.STATE.START) <- when one of your states is named 'START')
 
 #
 var StateScn = preload("res://addons/net.kivano.fsm/content/FSMState.gd");
@@ -67,31 +76,49 @@ signal stateChanged(newStateID, oldStateID);
 #entering states ids by hand. ex. fsm.set_state(fsm.STATE.START) <- when one of your states is named 'START')
 var STATE = {"":""};
 
+const HISTORY_MAX_SIZE = 10;
 const UPDATE_MODE_MANUAL = 0;
 const UPDATE_MODE_PROCESS = 1;
 const UPDATE_MODE_FIXED_PROCESS = 2;
 
+const TYPE_3D = 0;
+const TYPE_2D = 1;
+
 export (NodePath) var path2LogicRoot = NodePath(".."); 
 export (bool) var onlyActiveStateOnTheScene = true setget setOnlyActiveStateOnScene; 
-export (bool) var transitionsHardcodedInStates = true; 
 export (bool) var initManually = false; 
 export (int, "Manual", "Process", "Fixed") var updateMode = UPDATE_MODE_PROCESS;
+
+var stateTransitionsMap = {};
 
 var initStateID = "" setget setInitState; #id of initial state for this fsm (id is the same as state node name)
 var currentStateID = initStateID;
 var currentState = null
-var states = {"":""};
+var states = {};
+var allTransitions = {};
 var stateTime = 0;
+var statesHistory = [];
+var statesNode = null;
+var transitionsNode = null;
 
 ##################################################################################
 #########                          Init code                             #########
 ##################################################################################
 func _ready():
+	toolInit();
 	if(initManually):
 		return;
 	init();
 
 func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inStatesParam4=null, inStatesParam5=null):
+	
+	#
+	statesNode = get_node("States");
+	transitionsNode = get_node("Transitions");
+	
+	if(statesNode.get_child_count()==0):
+		return;
+	
 	#
 	if(get_tree().is_editor_hint()): return;
 	if(get_child_count()==0): return;
@@ -100,7 +127,9 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 	ensureInitStateIdIsSet();
 	
 	#
-	var states2Add = get_children();
+	states = {}; #to be sure
+	STATE = {};  #to be sure
+	var states2Add = statesNode.get_children();
 	for state2Add in states2Add:
 		if(state2Add extends preload("FSMState.gd")):
 			states[state2Add.get_name()] = state2Add;
@@ -109,21 +138,33 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 				state2Add.logicRoot = get_node(path2LogicRoot);
 				state2Add.fsm = self;
 				state2Add.stateInit(inStatesParam1,inStatesParam2,inStatesParam3,inStatesParam4, inStatesParam5);
+	
+	#
+	initTransitions(inStatesParam1, inStatesParam2, inStatesParam3, inStatesParam4, inStatesParam5);
 
 	#
 	if(onlyActiveStateOnTheScene):
+		
+		#remove transitions
+		var transitions = transitionsNode.get_children();
+		for transition in transitions:
+			transitionsNode.remove_child(transition);
+		
+		#states
 		var statesKeys = states.keys();
 		for stateKey in statesKeys:
 			if(stateKey!=initStateID):
-				remove_child(get_node(stateKey));
+				var state2Remove = statesNode.get_node(stateKey);
+				statesNode.remove_child(state2Remove);
 
 	#
 	if(initStateID!=""):
 		currentState = states[initStateID];
 		currentStateID = initStateID;
 	else:
-		currentState = get_children()[0];
+		currentState = statesNode.get_children()[0];
 		currentStateID = currentState.get_name();
+	ensureTransitionsForStateIDAreReady(currentStateID)
 	
 	#
 	currentState.enter(); 
@@ -131,15 +172,54 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 	#
 	initUpdateMode();
 
-
 func initUpdateMode():
 	if(updateMode==UPDATE_MODE_MANUAL): return;
 	elif(updateMode==UPDATE_MODE_PROCESS): set_process(true);
 	elif(updateMode==UPDATE_MODE_FIXED_PROCESS): set_fixed_process(true);
 
+func initTransitions(inParam1, inParam2, inParam3, inParam4, inParam5):
+	var transitions = transitionsNode.get_children()
+	for transition in transitions:
+		transition.manualInit(inParam1, inParam2, inParam3, inParam4, inParam5);
+		allTransitions[transition.get_name()] = transition;
+		var transitionSourceStates = transition.getAllSourceNodes();
+		for state in transitionSourceStates:
+			if(!stateTransitionsMap.has(state.get_name())):
+				stateTransitionsMap[state.get_name()] = [];
+			if(!stateTransitionsMap[state.get_name()].has(transition)):
+				stateTransitionsMap[state.get_name()].append(transition);
+
 func ensureInitStateIdIsSet():
 	if(initStateID == ""): 
-		initStateID = get_child(0).get_name();
+		initStateID = statesNode.get_child(0).get_name();
+
+func initHolderNodes():
+	if(has_node("States")):
+		statesNode = get_node("States");
+	else:
+		statesNode = createEmptyHolderNode();
+		add_child(statesNode);
+		statesNode.set_name("States");
+		statesNode.set_owner(get_tree().get_edited_scene_root());
+	
+	if(has_node("Transitions")):
+		transitionsNode = get_node("Transitions");
+	else:
+		transitionsNode= createEmptyHolderNode();
+		add_child(transitionsNode);
+		transitionsNode.set_name("Transitions");
+		transitionsNode.set_owner(get_tree().get_edited_scene_root());
+
+func createEmptyHolderNode(): 
+	if(self extends Node2D):
+		return Node2D.new();
+	elif(self extends Spatial):
+		return Spatial.new();
+	elif(self extends Control):
+		return Control.new();
+	else:
+		return Node.new();
+
 
 ##################################################################################
 #########                       Getters and Setters                      #########
@@ -157,26 +237,91 @@ func changeStateTo(inNewStateID):
 	if(currentStateID!=inNewStateID):
 		setState(inNewStateID);
 	
-func setState(inStateID):
+func setState(inStateID, inArg0=null,inArg1=null, inArg2=null):
 	
 	#
 	var prevStateID = currentStateID;
 	currentState.exit(inStateID);
+	archiveStateInHistory(prevStateID)
 	
 	#
 	if(onlyActiveStateOnTheScene):
-		remove_child(currentState);
-		add_child(states[inStateID]);
+		
+		#states
+		statesNode.remove_child(currentState);
+		statesNode.add_child(states[inStateID]);
+		
+		#transitions
+		var transitions = transitionsNode.get_children();
+		for transition in transitions: transitionsNode.remove_child(transition);
+		ensureTransitionsForStateIDAreReady(inStateID);
 		
 	#
 	currentState = states[inStateID];
-	currentState.enter(prevStateID);
+	currentState.enter(prevStateID, inArg0, inArg1, inArg2);
 	currentStateID = currentState.get_name()
 	stateTime = 0.0;
 	
 	#
 	emit_signal("stateChanged", currentStateID, prevStateID);
 
+func ensureTransitionsForStateIDAreReady(inStateID):
+	if(!stateTransitionsMap.has(inStateID)): return;
+	var newTransitions = stateTransitionsMap[inStateID];
+	for newTransition in newTransitions:
+		if(!transitionsNode.has_node(newTransition.get_name())):
+			transitionsNode.add_child(newTransition);
+		newTransition.prepare(inStateID);
+	
+
+func getLogicRoot():
+	return get_node(path2LogicRoot);
+
+### less often used below
+######
+func getStateFromID(inStateID):
+	return statesNode.get_node(inStateID);
+
+func getStates():
+	return statesNode.get_children();
+
+func hasStateWithID(inID):
+	return statesNode.has_node(inID);
+
+func getTransitions():
+	return transitionsNode.get_children();
+
+func hasTransition(inID):
+	return transitionsNode.has_node(inID);
+
+func getTransition(inID):
+	return transitionsNode.get_node(inID);
+
+func removeTargetConnection4TransitionID(inID):
+	getTransition(inID).clearTargetStateNode();
+
+func removeConnection2TransitionFromState(inStateID, inTransitionID):
+	var stateNode = getStateFromID(inStateID);
+	var transitionNode = getTransition(inTransitionID);
+	transitionNode.removeSourceConnection(stateNode);
+
+##### Transitions
+############
+func addTransitionBetweenStatesIDs(inSourceStateID, inTargetStateID, inTransitionID):
+	assert false; #omg need to implement
+
+#### History
+#######
+func archiveStateInHistory(inState2Archive):
+	var nmbOfElementsInHistory = statesHistory.size();
+	if(nmbOfElementsInHistory>HISTORY_MAX_SIZE):
+		statesHistory.pop_back();
+	statesHistory.push_front(inState2Archive)
+
+func getPrevStateFromHistory(inHowFar=0): #0 means prev
+	var historicState = statesHistory[inHowFar];
+	return historicState;
+	
 
 #### setters bellow are used by tool
 #######
@@ -196,18 +341,47 @@ func setOnlyActiveStateOnScene(inVal):
 ##################################################################################
 #########                         Public Methods                         #########
 ##################################################################################
-func update(inDeltaTime, param1=null, param2=null, param3=null, param4=null):
-	if(transitionsHardcodedInStates):
-		var nextStateID = currentState.computeNextState();
-		assert((typeof(nextStateID)==TYPE_STRING));  #ERROR: currentState.computeNextState() is not returning String!" Take a look at currentStateID variable in debugger
-		if(nextStateID!=currentStateID):
-			setState(nextStateID);
-	stateTime += inDeltaTime;
-	return currentState.update(inDeltaTime, param1, param2, param3, param4);
+#call function in current state
+func stateCall(inMethodName, inArg0=null, inArg1=null, inArg2=null):
+	if(currentState.has_method(inMethodName)):
+		if(inArg2!=null): currentState.call(inMethodName, inArg0, inArg1, inArg2);
+		elif(inArg1!=null): currentState.call(inMethodName, inArg0, inArg1);
+		elif(inArg0!=null): currentState.call(inMethodName, inArg0);
+		else: currentState.call(inMethodName);
 
 #just an alias for update, for the cases when delta time dont have much sense
 func perform():
 	update(0);
+
+func update(inDeltaTime, param0=null, param0=null, param1=null, param2=null, param3=null, param4=null):
+	var nextStateID = checkTransitionsAndGetNextStateID(inDeltaTime, param0, param1, param2, param3, param4);
+	assert((typeof(nextStateID)==TYPE_STRING));  #ERROR: currentState.computeNextState() is not returning String!" Take a look at currentStateID variable in debugger
+	if(nextStateID!=currentStateID):
+		setState(nextStateID);
+	
+	stateTime += inDeltaTime;
+	return currentState.update(inDeltaTime, param0, param1, param2, param3, param4);
+
+#############
+### Transitions check
+func checkTransitionsAndGetNextStateID(inDeltaTime, param0, param1, param2, param3, param4): #work
+	if(!stateTransitionsMap.has(currentStateID)): return currentStateID;
+	var relatedTransitions = stateTransitionsMap[currentStateID];
+	for transition in relatedTransitions:
+		if(!transitionReady2BeChecked(inDeltaTime, transition)): continue;
+		if(transition.check(inDeltaTime, param0, param1, param2, param3, param4)):
+			return transition.getTargetStateID();
+	return currentStateID;
+	
+
+func transitionReady2BeChecked(inDeltaTime, transition):
+	if(transition.intervalBetweenChecks>0.0):
+		transition.timeSinceLastCheck += inDeltaTime;
+		if(transition.timeSinceLastCheck<transition.intervalBetweenChecks):
+			return false;
+		else:
+			transition.timeSinceLastCheck = 0.0;
+	return true;
 
 #################################################################################
 #########                    Implemented from ancestor                   #########
@@ -218,57 +392,102 @@ func _process(delta):
 func _fixed_process(delta):
 	update(delta);
 
-####################################
-###########################
-############### TOOL / PLUGIN part
-#############################
-####################################
+##############################################################
+######################        ################################
+############### TOOL / PLUGIN part ###########################
+########################    ##################################
+##############################################################
+var FSMGraphScn = preload("FSMGraph/FSMGraph.tscn");
+var FSMGraphInstance;
+
 const INSP_INIT_STATE = "Initial state:";
-const INSP_SUBDIR_4_STATES  = "Create new State/Subdirectory for states";
-const INSP_CREATE_NEW_STATE = "Create new State/Create state with name:";
+const INSP_SUBDIR_4_STATES  = "Create new:/Subdirectory for FSM nodes:";
+const INSP_CREATE_NEW_STATE = "Create new:/Create state with name:";
+const INSP_CREATE_NEW_TRANSITION = "Create new:/Create transition with name:";
+const GRAPH_DATA = "GraphData"
 
+const SUBDIR_4_STATES = "states";
+const SUBDIR_4_TRANSITIONS = "transitions";
 
-var additionalSubDirectory4States = "FSM";
+var additionalSubDirectory4FSMData = "FSM";
+var additionalGraphData = {};
 
+func toolInit():
+	if(!get_tree().is_editor_hint()): return;
+	initHolderNodes();
+	return;
+	FSMGraphInstance = FSMGraphScn.instance();
+	FSMGraphInstance.manualInit(self);
+
+#func getBaseFolderFilepath():
+#	var owner = get_owner();
+#	var dirPath = owner.get_filename().get_base_dir();
+#	if(additionalSubDirectory4FSMData!=""):
+#		dirPath = dirPath + "/" +additionalSubDirectory4FSMData + "/" + inStateID;
+#	else:
+#		dirPath = dirPath + "/" + inStateID;
+#	return dirPath;
+
+############
+### Creating States/Transitions
 func createState(inStateName):
-	if (inStateName==null) || (inStateName.empty()) || has_node(inStateName): return;
+	createElement(inStateName, statesNode, SUBDIR_4_STATES, "res://addons/net.kivano.fsm/content/StateTemplate.gd");
+
+func createTransition(inTransitionName, inScriptPath = null):
+	var script = null;
+	if(inScriptPath!=null):
+		script = load(inScriptPath);
+	createElement(inTransitionName, transitionsNode, SUBDIR_4_TRANSITIONS, "res://addons/net.kivano.fsm/content/TransitionTemplate.gd", script);
+
+func createElement(inElementName, inHolderNode, inElementsSubfolder, inTemplateScriptPath, inAlreadyExistingScript2Use = null):
+	if (inElementName==null) || (inElementName.empty()) || has_node(inElementName): return;
 	
 	#
 	var owner = get_owner();
-	var dirPath = owner.get_filename().get_base_dir();
-
+	
 	#
 	var dirMaker = Directory.new();
-	if(additionalSubDirectory4States!=""): 
-		dirPath = dirPath + "/" +additionalSubDirectory4States ;
-		dirMaker.make_dir(dirPath);
-	dirPath = dirPath + "/" + inStateName
-	dirMaker.make_dir(dirPath);
+	var dirPath = getFolderFilepath4Element(inElementName, inElementsSubfolder);
+	dirMaker.make_dir_recursive(dirPath);
 	
-	var scriptFilePath = dirPath + "/" + inStateName + ".gd";
-	var sceneFilePath = dirPath + "/" + inStateName + ".tscn";
+	var scriptFilePath = dirPath + "/" + inElementName + ".gd";
+	var sceneFilePath = dirPath + "/" + inElementName + ".tscn";
 	
 	#
-	var saveGameFile = File.new();
-	saveGameFile.open(scriptFilePath, File.WRITE);
-	saveGameFile.store_string(load("res://addons/net.kivano.fsm/content/StateTemplate.gd").get_source_code()); 
-	saveGameFile.close();
-	var script = load(scriptFilePath);
+	var script = inAlreadyExistingScript2Use;
+	if(script==null):
+		var saveGameFile = File.new();
+		saveGameFile.open(scriptFilePath, File.WRITE);
+		saveGameFile.store_string(load(inTemplateScriptPath).get_source_code()); 
+		saveGameFile.close();
+		script = load(scriptFilePath);
 	
 	#
 	var scnStateNode = Node.new();
 	scnStateNode.set_script(script);
-	scnStateNode.set_name(inStateName);
+	scnStateNode.set_name(inElementName);
 	var packedScn = PackedScene.new();
 	packedScn.pack(scnStateNode);
 	ResourceSaver.save(sceneFilePath, packedScn);
 	
 	var scn2Add = load(sceneFilePath).instance();
-	add_child(scn2Add)
+	inHolderNode.add_child(scn2Add)
 	scn2Add.set_owner(get_tree().get_edited_scene_root());
 
+func getFolderFilepath4Element(inElementID, inElementsSubdir):
+	var owner = get_owner();
+	var dirPath = owner.get_filename().get_base_dir();
+	if(additionalSubDirectory4FSMData!=""):
+		dirPath = dirPath + "/" +additionalSubDirectory4FSMData + "/" + inElementsSubdir + "/" + inElementID;
+	else:
+		dirPath = dirPath + "/" + inElementsSubdir + "/" + inElementID;
+	return dirPath;
+
+
+############
+#### properties
 func _get_property_list():
-	var currentStatesList = get_children();
+	var currentStatesList = statesNode.get_children();
 	var statesListString = "";
 	for state in currentStatesList:
 		statesListString = statesListString + state.get_name() + ",";
@@ -293,24 +512,44 @@ func _get_property_list():
             "usage": PROPERTY_USAGE_DEFAULT,
             "name": INSP_CREATE_NEW_STATE,
             "type": TYPE_STRING
+        },
+			{
+            "hint": PROPERTY_HINT_NONE,
+            "usage": PROPERTY_USAGE_DEFAULT,
+            "name": INSP_CREATE_NEW_TRANSITION,
+            "type": TYPE_STRING
+        },
+        {
+            "hint": PROPERTY_HINT_NONE,
+            "usage": PROPERTY_USAGE_STORAGE,
+            "name": GRAPH_DATA,
+            "type": TYPE_DICTIONARY
         }
     ];
 func _get(property):
 	if(property == INSP_SUBDIR_4_STATES):
-		return additionalSubDirectory4States;        
+		return additionalSubDirectory4FSMData;        
 	elif(property==INSP_INIT_STATE):
 		return initStateID;
+	elif(property==GRAPH_DATA):
+		return additionalGraphData;
 
 func _set(property, value):
 	if(property == INSP_SUBDIR_4_STATES):
-		additionalSubDirectory4States = value;
+		additionalSubDirectory4FSMData = value;
 		return true;
 	elif(property == INSP_CREATE_NEW_STATE):
 		createState(value);
 		return false;
+	elif(property==INSP_CREATE_NEW_TRANSITION):
+		createTransition(value);
+		return false;
 	elif(property==INSP_INIT_STATE):
 		setInitState(value);
 		return true
+	elif(property==GRAPH_DATA):
+		additionalGraphData = value;
+		return true;
 
 #### visibility of states
 #######
@@ -320,7 +559,7 @@ func hideAllVisibleStatesExceptInitOne():
 	callMethodInStatesAndAllDirectChilds("hide");
 
 func callMethodInStatesAndAllDirectChilds(inMethodName):
-	var states = get_children();
+	var states = statesNode.get_children();
 	for state in states:
 		if(state.get_name()==initStateID): 
 			showStateOrItsDirectChilds(state);
@@ -339,3 +578,18 @@ func showStateOrItsDirectChilds(inState):
 		var stateChilds = inState.get_children();
 		for stateChild in stateChilds:
 			if(stateChild.has_method("show")): stateChild.show();
+
+##############
+#### Graph
+func toolSave2Dict():
+	if(FSMGraphInstance!=null):
+		return FSMGraphInstance.toolSave2Dict();
+
+func toolLoadFromDict(state):
+	if(FSMGraphInstance!=null):
+		FSMGraphInstance.restorePernamentData(state);
+
+
+##################################################################################
+#########                         Inner Classes                          #########
+##################################################################################

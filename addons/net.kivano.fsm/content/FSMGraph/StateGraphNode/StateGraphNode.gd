@@ -1,38 +1,44 @@
-extends "res://addons/net.kivano.fsm/content/FSMState.gd";
-################################### R E A D M E ##################################
-# For more informations check script attached to FSM node
-#
-#
+tool
+extends "res://addons/net.kivano.fsm/content/FSMGraph/GraphNode/GraphNode.gd";
+#################################### N O T E S ###################################
+# Change this template under /addons/net.kivano.smartextender/SCRIPT_TEMPLATE
+# 
+# 
+# 
+
+##################################################################################
+#########                     Imported classes/scenes                    #########
+##################################################################################
+
+##################################################################################
+#########                       Signals definitions                      #########
+##################################################################################
 
 ##################################################################################
 #####  Variables (Constants, Export Variables, Node Vars, Normal variables)  #####
 ######################### var myvar setget myvar_set,myvar_get ###################
 
 ##################################################################################
+#########                          Init code                             #########
+##################################################################################
+func _notification(what):
+	if (what == NOTIFICATION_INSTANCED):
+		pass #all internal initialization
+	elif(what == NOTIFICATION_READY):
+		baseType = TYPE_STATE;
+		inputConnectionType = TYPE_TRANSITION;
+		outputConnectionType = TYPE_TRANSITION;
+##################################################################################
 #########                       Getters and Setters                      #########
 ##################################################################################
-#you will want to use those
-func getFSM(): return fsm; #defined in parent class
-func getLogicRoot(): return logicRoot; #defined in parent class 
 
 ##################################################################################
-#########                 Implement those below ancestor                 #########
+#########              Should be implemented in inheritanced             #########
 ##################################################################################
-#you can transmit parameters if fsm is initialized manually
-func stateInit(inParam1=null,inParam2=null,inParam3=null,inParam4=null, inParam5=null): 
-	pass
 
-#when entering state, usually you will want to reset internal state here somehow
-func enter(fromStateID=null, inArg0=null,inArg1=null, inArg2=null):
-	pass
-
-#when updating state, paramx can be used only if updating fsm manually
-func update(deltaTime, param0=null, param1=null, param2=null, param3=null, param4=null):
-	pass
-
-#when exiting state
-func exit(toState=null):
-	pass
+##################################################################################
+#########                    Implemented from ancestor                   #########
+##################################################################################
 
 ##################################################################################
 #########                       Connected Signals                        #########
@@ -53,3 +59,7 @@ func exit(toState=null):
 ##################################################################################
 #########                         Inner Classes                          #########
 ##################################################################################
+
+
+
+

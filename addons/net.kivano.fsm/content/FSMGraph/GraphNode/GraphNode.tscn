@@ -1,0 +1,99 @@
+[gd_scene load_steps=5 format=1]
+
+[ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/GraphNode/GraphNode.gd" type="Script" id=1]
+[ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/Arrow/Arrow.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/net.kivano.fsm/assets/state_9path.png" type="Texture" id=3]
+[ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/StateGraphNode/InputSocketPosition/InputSocketPosition.gd" type="Script" id=4]
+
+[node name="GraphNode" type="Control"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 117.0
+margin/bottom = 46.0
+script/script = ExtResource( 1 )
+name = "STATE NAME"
+
+[node name="arrows" type="Control" parent="."]
+
+editor/display_folded = true
+anchor/left = 3
+anchor/top = 3
+anchor/right = 3
+anchor/bottom = 3
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.5
+margin/top = 0.0
+margin/right = 0.5
+margin/bottom = 0.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="dragArrow" parent="arrows" instance=ExtResource( 2 )]
+
+closeIconActive = false
+end_offset = 35
+
+[node name="Patch9Frame" type="Patch9Frame" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = -35.0
+margin/top = -10.0
+margin/right = 147.0
+margin/bottom = 54.0
+texture = ExtResource( 3 )
+patch_margin/left = 25
+patch_margin/top = 25
+patch_margin/right = 25
+patch_margin/bottom = 25
+
+[node name="title" type="Label" parent="."]
+
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -29.0
+margin/top = 0.0
+margin/right = -27.0
+margin/bottom = 0.0
+text = "STATE NAME"
+align = 1
+valign = 1
+autowrap = true
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="inputSocketPositions" type="Control" parent="."]
+
+anchor/left = 3
+anchor/top = 3
+anchor/right = 3
+anchor/bottom = 3
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 3.5
+margin/top = 1.0
+margin/right = 3.5
+margin/bottom = 1.0
+script/script = ExtResource( 4 )
+
+[connection signal="input_event" from="." to="." method="_on_StateRepresentation_input_event"]
+
+
