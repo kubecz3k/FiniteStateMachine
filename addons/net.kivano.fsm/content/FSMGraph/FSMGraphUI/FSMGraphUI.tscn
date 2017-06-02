@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=1]
+[gd_scene load_steps=6 format=1]
 
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/FSMGraphUI/FSMGraphUI.gd" type="Script" id=1]
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/FSMGraph.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/FSMGraphUI/NewElementBtn/NewElementBtn.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/net.kivano.fsm/assets/white.png" type="Texture" id=4]
 
 [sub_resource type="Animation" id=1]
 
@@ -290,6 +291,42 @@ bbcode/bbcode = "##################################### README  #################
 "
 visible_characters = -1
 
+[node name="TextureFrame" type="TextureFrame" parent="HelpText"]
+
+visibility/behind_parent = true
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 0.0
+texture = ExtResource( 4 )
+modulate = Color( 0.168627, 0.203922, 0.239216, 0.882353 )
+expand = true
+stretch_mode = 0
+
+[node name="close" type="Button" parent="."]
+
+anchor/left = 1
+anchor/right = 1
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 20.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 20.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "X"
+flat = false
+
 [connection signal="resized" from="." to="." method="_on_FSMGraphUI_resized"]
 
 [connection signal="arrowDragFinishedAtEmptySpace" from="FSMGraph" to="." method="_on_FSMGraph_arrowDragFinishedAtEmptySpace"]
@@ -311,5 +348,7 @@ visible_characters = -1
 [connection signal="confirmed" from="transitionScriptChooseDialog" to="." method="_on_transitionScriptChooseDialog_confirmed"]
 
 [connection signal="file_selected" from="transitionScriptChooseDialog" to="." method="_on_transitionScriptChooseDialog_file_selected"]
+
+[connection signal="pressed" from="close" to="." method="_on_close_pressed"]
 
 

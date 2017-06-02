@@ -34,6 +34,7 @@ func _notification(what):
 	if (what == NOTIFICATION_INSTANCED):
 		graph = get_node("FSMGraph");
 	elif(what == NOTIFICATION_READY):
+		set_process_input(true)
 		pass
 #		get_node("initSetup").play("default");
 #		graph.set_
@@ -41,6 +42,15 @@ func _notification(what):
 func manualInit(inFsm):
 	fsmRef = weakref(inFsm);
 	graph.manualInit(inFsm);
+
+func _input(event):
+	if(event.type==InputEvent.MOUSE_BUTTON):
+		if(event.global_pos.y<get_global_pos().y):
+			if(event.global_pos.x<(get_rect().size).x):
+				hide(); #user probably want to click '2d/3d/Script/AssetLib'
+		elif((event.global_pos.x>get_rect().size.x) && (event.global_pos.x>get_viewport().get_visible_rect().size.x*0.95)):
+			hide(); #quite possible he is clicking on script icon in scene tree
+		
 
 ##################################################################################
 #########                       Getters and Setters                      #########
@@ -80,7 +90,6 @@ func _on_NewElementBtn_transitionCreateRequest( inTransitionName, inCreateScript
 		var dirPath = fsm.get_owner().get_filename().get_base_dir() + "/" + fsm.additionalSubDirectory4FSMData;
 		fileChooserUI.set_current_dir(dirPath);
 		get_node("transitionScriptChooseDialog").popup_centered_ratio();
-		
 
 func _on_transitionScriptChooseDialog_file_selected( scriptPath ):
 	graph.createTransitionGraphAndFSMNodeAndConnect2(prevTransitionNameCreateRequest, newElementBtn.get_global_pos(), lastCreateRequestFromGraphNode, scriptPath);
@@ -101,6 +110,11 @@ func _on_btnHelp_pressed():
 		get_node("HelpText").hide();
 	else:
 		get_node("HelpText").show();
+
+
+func _on_close_pressed():
+	hide();
+
 ##################################################################################
 #########     Methods fired because of events (usually via Groups interface)  ####
 ##################################################################################
@@ -137,6 +151,7 @@ func _on_btnRefresh_pressed():
 	var fsm = fsmRef.get_ref();
 #	get_node("initSetup").play("default");
 	if(fsm!=null):
+		graph.clearGraphNodes();
 		graph.manualInit(fsm);
 
 func _on_FSMGraphUI_resized():
@@ -144,6 +159,8 @@ func _on_FSMGraphUI_resized():
 
 func _on_FSMGraph_selectNodeRequest( inFsmNode ):
 	emit_signal("selectNodeRequest", inFsmNode);
+
+
 
 
 

@@ -76,6 +76,9 @@ signal stateChanged(newStateID, oldStateID);
 #entering states ids by hand. ex. fsm.set_state(fsm.STATE.START) <- when one of your states is named 'START')
 var STATE = {"":""};
 
+#same as above but for transitions
+var TRANSITION = {"":""};
+
 const HISTORY_MAX_SIZE = 10;
 const UPDATE_MODE_MANUAL = 0;
 const UPDATE_MODE_PROCESS = 1;
@@ -100,6 +103,7 @@ var stateTime = 0;
 var statesHistory = [];
 var statesNode = null;
 var transitionsNode = null;
+var lastlyUsedTransitionID = null;
 
 ##################################################################################
 #########                          Init code                             #########
@@ -178,8 +182,10 @@ func initUpdateMode():
 	elif(updateMode==UPDATE_MODE_FIXED_PROCESS): set_fixed_process(true);
 
 func initTransitions(inParam1, inParam2, inParam3, inParam4, inParam5):
+	TRANSITION = {};#to be sure
 	var transitions = transitionsNode.get_children()
 	for transition in transitions:
+		TRANSITION[transition.get_name()] = transition.get_name();
 		transition.manualInit(inParam1, inParam2, inParam3, inParam4, inParam5);
 		allTransitions[transition.get_name()] = transition;
 		var transitionSourceStates = transition.getAllSourceNodes();
@@ -258,7 +264,7 @@ func setState(inStateID, inArg0=null,inArg1=null, inArg2=null):
 		
 	#
 	currentState = states[inStateID];
-	currentState.enter(prevStateID, inArg0, inArg1, inArg2);
+	currentState.enter(prevStateID, lastlyUsedTransitionID, inArg0, inArg1, inArg2);
 	currentStateID = currentState.get_name()
 	stateTime = 0.0;
 	
@@ -273,15 +279,27 @@ func ensureTransitionsForStateIDAreReady(inStateID):
 			transitionsNode.add_child(newTransition);
 		newTransition.prepare(inStateID);
 	
-
 func getLogicRoot():
 	return get_node(path2LogicRoot);
 
-### less often used below
-######
 func getStateFromID(inStateID):
 	return statesNode.get_node(inStateID);
 
+func getTransition(inID):
+	if(get_tree().is_editor_hint()): return transitionsNode.get_node(inID);  #<- not used because transition might not be in tree during runtime
+	return allTransitions[inID];
+
+#sugar
+func getTransitionWithID(inID): return getTransition(inID);
+
+func getLastlyUsedTransition():
+	return getTransition(lastlyUsedTransitionID);
+
+func lastlyUsedTransitionID():
+	return lastlyUsedTransitionID;
+
+### less often used below
+######
 func getStates():
 	return statesNode.get_children();
 
@@ -294,9 +312,6 @@ func getTransitions():
 func hasTransition(inID):
 	return transitionsNode.has_node(inID);
 
-func getTransition(inID):
-	return transitionsNode.get_node(inID);
-
 func removeTargetConnection4TransitionID(inID):
 	getTransition(inID).clearTargetStateNode();
 
@@ -305,10 +320,13 @@ func removeConnection2TransitionFromState(inStateID, inTransitionID):
 	var transitionNode = getTransition(inTransitionID);
 	transitionNode.removeSourceConnection(stateNode);
 
-##### Transitions
-############
 func addTransitionBetweenStatesIDs(inSourceStateID, inTargetStateID, inTransitionID):
-	assert false; #omg need to implement
+	#assert: you should create transition from inspector first! (don't make a lot of sense to create it from code: 
+	#you will need to implement custom transition logic anyway)
+	assert transitionsNode.has_node(inTransitionID); 
+	var transitionNode = transitionsNode.get_node(inTransitionID);
+	transitionNode.addSourceStateNode(statesNode.get_node(inSourceStateID));
+	transitionNode.setTargetStateNode(statesNode.get_node(inTargetStateID));
 
 #### History
 #######
@@ -353,7 +371,7 @@ func stateCall(inMethodName, inArg0=null, inArg1=null, inArg2=null):
 func perform():
 	update(0);
 
-func update(inDeltaTime, param0=null, param0=null, param1=null, param2=null, param3=null, param4=null):
+func update(inDeltaTime, param0=null, param1=null, param2=null, param3=null, param4=null):
 	var nextStateID = checkTransitionsAndGetNextStateID(inDeltaTime, param0, param1, param2, param3, param4);
 	assert((typeof(nextStateID)==TYPE_STRING));  #ERROR: currentState.computeNextState() is not returning String!" Take a look at currentStateID variable in debugger
 	if(nextStateID!=currentStateID):
@@ -370,6 +388,7 @@ func checkTransitionsAndGetNextStateID(inDeltaTime, param0, param1, param2, para
 	for transition in relatedTransitions:
 		if(!transitionReady2BeChecked(inDeltaTime, transition)): continue;
 		if(transition.check(inDeltaTime, param0, param1, param2, param3, param4)):
+			lastlyUsedTransitionID = transition.get_name();
 			return transition.getTargetStateID();
 	return currentStateID;
 	
@@ -415,9 +434,6 @@ var additionalGraphData = {};
 func toolInit():
 	if(!get_tree().is_editor_hint()): return;
 	initHolderNodes();
-	return;
-	FSMGraphInstance = FSMGraphScn.instance();
-	FSMGraphInstance.manualInit(self);
 
 #func getBaseFolderFilepath():
 #	var owner = get_owner();

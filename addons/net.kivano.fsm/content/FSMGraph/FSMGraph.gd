@@ -76,6 +76,7 @@ func refreshFromFSMData():
 		createStateGraphNode(Vector2(50,50), state.get_name());
 	var transitions = fsm.getTransitions();
 	for transition in transitions:
+		transition.refreshTargetNodeFromPath();
 		var transGraphNode = createTransitionGraphNode(Vector2(250,50), transition.get_name());
 		var transitionGraphNode = graphNodes.get_node(transition.get_name());
 		var sourceNodes = transition.getAllSourceNodes();

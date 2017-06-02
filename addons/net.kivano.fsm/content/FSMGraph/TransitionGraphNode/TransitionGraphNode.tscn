@@ -2,25 +2,30 @@
 
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/GraphNode/GraphNode.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/TransitionGraphNode/TransitionGraphNode.gd" type="Script" id=2]
-[ext_resource path="res://addons/net.kivano.fsm/assets/transition_9path.png" type="Texture" id=3]
+[ext_resource path="res://addons/net.kivano.fsm/assets/small_transition_9path.png" type="Texture" id=3]
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/StateGraphNode/InputSocketPosition/InputSocketPosition.tscn" type="PackedScene" id=4]
 
 [node name="TransitionGraphNode" instance=ExtResource( 1 )]
 
 script/script = ExtResource( 2 )
 
-[node name="Patch9Frame" parent="."]
+[node name="title" parent="."]
 
-rect/scale = Vector2( 0.5, 0.5 )
-margin/left = -20.0
-margin/top = -3.0
-margin/right = 289.0
-margin/bottom = 97.0
+editor/display_folded = true
+margin/left = -1.0
+margin/right = 7.0
+
+[node name="Patch9Frame" parent="title"]
+
+margin/left = -14.0
+margin/top = -7.0
+margin/right = -12.0
+margin/bottom = -7.0
 texture = ExtResource( 3 )
-patch_margin/left = 50
-patch_margin/top = 50
-patch_margin/right = 50
-patch_margin/bottom = 50
+patch_margin/left = 30
+patch_margin/top = 30
+patch_margin/right = 30
+patch_margin/bottom = 30
 
 [node name="0" parent="inputSocketPositions" instance=ExtResource( 4 )]
 

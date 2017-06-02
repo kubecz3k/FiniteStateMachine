@@ -21,6 +21,7 @@ export(float) var end_offset = 0 setget set_end_offset
 export(float) var side_offset = 0 setget set_side_offset
 
 export(Color) var color = null setget set_color
+export(Color) var beginningColor = null setget setBegginingColor;
 
 export(bool) var editor_only = false
 export(bool) var with_arrow = true setget setWithArrow;
@@ -31,6 +32,9 @@ onready var closeIcon = get_node("CloseIcon");
 func _enter_tree():
 	if is_visible():
 		set_process(true)
+	
+	if(beginningColor == null):
+		beginningColor = color;
 
 func _ready():
 	if is_visible():
@@ -44,10 +48,17 @@ func setPointingOnState(inPointingOnState):
 	pointingOnState = inPointingOnState;
 	if(pointingOnState):
 		end_offset = 5;
+	
+	if(pointingOnState):
+		beginningColor = color;
 
 func setWithArrow(inWithArrow):
 	with_arrow = inWithArrow;
 	update();
+	
+
+func setBegginingColor(inColor):
+	beginningColor = inColor;
 
 func getTargetNode():
 	if(target_node_path==null):return null;
@@ -79,7 +90,7 @@ func _draw():
 	var sideoffset = sidedir * side_offset
 	
 	points.append(sideoffset + startoffset + sidevec)
-	colors.append(color)
+	colors.append(beginningColor)
 	points.append(sideoffset + endoffset + sidevec + arrowvec - pointvec)
 	colors.append(color)
 #	if(with_arrow):
@@ -94,7 +105,7 @@ func _draw():
 	points.append(sideoffset + endoffset - sidevec + arrowvec - pointvec)
 	colors.append(color)
 	points.append(sideoffset + startoffset - sidevec)
-	colors.append(color)
+	colors.append(beginningColor)
 	
 	self.draw_polygon(points, colors)
 	
@@ -153,7 +164,6 @@ func set_side_offset(value):
 func set_color(value):
 	color = value
 	update()
-
 
 func _on_CloseIcon_onCloseBtnClicked():
 	emit_signal("removeConnectionRequest", getTargetNode());

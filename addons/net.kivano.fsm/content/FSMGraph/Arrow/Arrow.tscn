@@ -14,6 +14,7 @@ start_offset = 0.0
 end_offset = 0
 side_offset = 0
 color = Color( 0.396078, 0.764706, 0.529412, 1 )
+beginningColor = Color( 0.32549, 0.611765, 0.952941, 1 )
 editor_only = false
 with_arrow = true
 

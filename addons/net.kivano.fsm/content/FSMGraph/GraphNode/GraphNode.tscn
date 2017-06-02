@@ -42,22 +42,6 @@ __meta__ = {
 closeIconActive = false
 end_offset = 35
 
-[node name="Patch9Frame" type="Patch9Frame" parent="."]
-
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = -35.0
-margin/top = -10.0
-margin/right = 147.0
-margin/bottom = 54.0
-texture = ExtResource( 3 )
-patch_margin/left = 25
-patch_margin/top = 25
-patch_margin/right = 25
-patch_margin/bottom = 25
-
 [node name="title" type="Label" parent="."]
 
 anchor/right = 1
@@ -73,10 +57,28 @@ margin/bottom = 0.0
 text = "STATE NAME"
 align = 1
 valign = 1
-autowrap = true
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
+
+[node name="Patch9Frame" type="Patch9Frame" parent="title"]
+
+visibility/behind_parent = true
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = -10.0
+margin/top = -10.0
+margin/right = -10.0
+margin/bottom = -8.0
+texture = ExtResource( 3 )
+patch_margin/left = 25
+patch_margin/top = 25
+patch_margin/right = 25
+patch_margin/bottom = 25
 
 [node name="inputSocketPositions" type="Control" parent="."]
 

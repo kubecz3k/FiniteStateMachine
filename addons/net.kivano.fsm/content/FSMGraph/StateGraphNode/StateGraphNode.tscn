@@ -8,14 +8,6 @@
 
 script/script = ExtResource( 2 )
 
-[node name="Patch9Frame" parent="."]
-
-rect/scale = Vector2( 0.6, 0.6 )
-margin/left = -32.0
-margin/top = -5.0
-margin/right = 271.0
-margin/bottom = 81.0
-
 [node name="title" parent="."]
 
 margin/left = -26.0
@@ -24,9 +16,9 @@ margin/bottom = 6.0
 
 [node name="0" parent="inputSocketPositions" instance=ExtResource( 3 )]
 
-margin/left = 3.0
+margin/left = 43.0
 margin/top = -33.0
-margin/right = 3.0
+margin/right = 43.0
 margin/bottom = -33.0
 
 [node name="1" parent="inputSocketPositions" instance=ExtResource( 3 )]
@@ -39,16 +31,16 @@ margin/bottom = -33.0
 [node name="2" parent="inputSocketPositions" instance=ExtResource( 3 )]
 
 margin/left = 100.0
-margin/top = -15.0
+margin/top = -17.0
 margin/right = 100.0
-margin/bottom = -15.0
+margin/bottom = -17.0
 
 [node name="3" parent="inputSocketPositions" instance=ExtResource( 3 )]
 
 margin/left = 100.0
-margin/top = -1.0
+margin/top = -3.0
 margin/right = 100.0
-margin/bottom = -1.0
+margin/bottom = -3.0
 
 [node name="4" parent="inputSocketPositions" instance=ExtResource( 3 )]
 
@@ -64,11 +56,25 @@ margin/top = 29.0
 margin/right = 78.0
 margin/bottom = 29.0
 
+[node name="6" parent="inputSocketPositions" instance=ExtResource( 3 )]
+
+margin/left = 38.0
+margin/top = 29.0
+margin/right = 38.0
+margin/bottom = 29.0
+
 [node name="7" parent="inputSocketPositions" instance=ExtResource( 3 )]
 
 margin/left = 3.0
 margin/top = 29.0
 margin/right = 3.0
+margin/bottom = 29.0
+
+[node name="8" parent="inputSocketPositions" instance=ExtResource( 3 )]
+
+margin/left = -40.0
+margin/top = 29.0
+margin/right = -40.0
 margin/bottom = 29.0
 
 [node name="9" parent="inputSocketPositions" instance=ExtResource( 3 )]
@@ -88,9 +94,9 @@ margin/bottom = 14.0
 [node name="11" parent="inputSocketPositions" instance=ExtResource( 3 )]
 
 margin/left = -95.0
-margin/top = 1.0
+margin/top = -1.0
 margin/right = -95.0
-margin/bottom = 1.0
+margin/bottom = -1.0
 
 [node name="12" parent="inputSocketPositions" instance=ExtResource( 3 )]
 
@@ -105,5 +111,19 @@ margin/left = -62.0
 margin/top = -33.0
 margin/right = -62.0
 margin/bottom = -33.0
+
+[node name="14" parent="inputSocketPositions" instance=ExtResource( 3 )]
+
+margin/left = -32.0
+margin/top = -33.0
+margin/right = -32.0
+margin/bottom = -33.0
+
+[node name="15" parent="inputSocketPositions" instance=ExtResource( 3 )]
+
+margin/left = 3.0
+margin/top = -31.0
+margin/right = 3.0
+margin/bottom = -31.0
 
 
