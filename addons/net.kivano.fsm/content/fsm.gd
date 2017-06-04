@@ -2,36 +2,36 @@ tool
 extends Node
 ##################################### README  ###############################
 #
-# * To create new state check  "Create New:" subsection in FSM inspector 
-# 
-# * Dont be afraid to check FSM script to check available methods 
+# * To create new state check  "Create New:" subsection in FSM inspector
+#
+# * Dont be afraid to check FSM script to check available methods
 #
 # * Exported Variables of FSM which are intended to be used by users:
 #
 #     NodePath path2LogicRoot: states usually perform logic based on variables in
-#         some external node, like 'Enemy'. This variable usually points to this node. 
+#         some external node, like 'Enemy'. This variable usually points to this node.
 #         It dont have any other purpose other than to be available for child states.
 #
 #     bool onlyActiveStateOnTheScene: if this is true, then only active state is present
 #         on scene tree. It might be handy if states have visual representation
 #
 #     bool initManually: #you can set this to true to set export vars in runtime from code,
-#         before you will be able to use this FSM you will need to run init() function. 
+#         before you will be able to use this FSM you will need to run init() function.
 #         Run init() only after setting exported variables.
 #
 #     string Initial state: you can choose from this list with which state FSM should start.
 #
-#     int updateMode: if set to manual, then it's up to you to update this FSM. In this case 
+#     int updateMode: if set to manual, then it's up to you to update this FSM. In this case
 #         you need to call FSM.update(inDeltaTime) to update this fsm (usually once per frame)
-#         
 #
-########## 
+#
+##########
 # * Exported variables that are editor helpers:
 #
-#      Subdirectory for states: you can set name of directory which will be automatically 
+#      Subdirectory for states: you can set name of directory which will be automatically
 #          created to hold all states for this FSM
 #
-#      Create state with name: when you enter and accept name for a state it will be 
+#      Create state with name: when you enter and accept name for a state it will be
 #          immediatelly created and added to scene tree as a child of current FSM
 #          This state will have an unique script in which you can implement state logic.
 #
@@ -41,15 +41,15 @@ extends Node
 #
 #     getStateID(): return name of current state
 #
-#     getState(): return node with current state  
+#     getState(): return node with current state
 #
-#     changeStateTo(inNewStateID): can be used to change state. 
+#     changeStateTo(inNewStateID): can be used to change state.
 #        Usually dont need to be used if you are using graph to link your states
-#      
+#
 #     stateTime(): returns how long current state is active
 #
 #     update(inDeltaTime): update FSM to update current state. Should be
-#        used in every game tick, but should use it only if you are using 
+#        used in every game tick, but should use it only if you are using
 #        updateMode="Manual".
 #
 #    init(): use only if initManually = true. You will be able to pass additional arguments
@@ -58,7 +58,7 @@ extends Node
 #
 ################
 # * Members that are intended to be used by users:
-#    STATE: you can use this dictionary to access state id. Using is is recommended because it's less error prone than 
+#    STATE: you can use this dictionary to access state id. Using is is recommended because it's less error prone than
 #        entering states ids by hand. ex. fsm.changeStateTo(fsm.STATE.START) <- when one of your states is named 'START')
 
 #
@@ -72,7 +72,7 @@ signal stateChanged(newStateID, oldStateID);
 #####  Variables (Constants, Export Variables, Node Vars, Normal variables)  #####
 ######################### var myvar setget myvar_set,myvar_get ###################
 
-#you can use this dictionary to access state id. Using is is recommended because it's less error prone than 
+#you can use this dictionary to access state id. Using is is recommended because it's less error prone than
 #entering states ids by hand. ex. fsm.set_state(fsm.STATE.START) <- when one of your states is named 'START')
 var STATE = {"":""};
 
@@ -87,9 +87,9 @@ const UPDATE_MODE_FIXED_PROCESS = 2;
 const TYPE_3D = 0;
 const TYPE_2D = 1;
 
-export (NodePath) var path2LogicRoot = NodePath(".."); 
-export (bool) var onlyActiveStateOnTheScene = true setget setOnlyActiveStateOnScene; 
-export (bool) var initManually = false; 
+export (NodePath) var path2LogicRoot = NodePath("..");
+export (bool) var onlyActiveStateOnTheScene = false setget setOnlyActiveStateOnScene;
+export (bool) var initManually = false;
 export (int, "Manual", "Process", "Fixed") var updateMode = UPDATE_MODE_PROCESS;
 
 var stateTransitionsMap = {};
@@ -115,21 +115,21 @@ func _ready():
 	init();
 
 func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inStatesParam4=null, inStatesParam5=null):
-	
+
 	#
 	statesNode = get_node("States");
 	transitionsNode = get_node("Transitions");
-	
+
 	if(statesNode.get_child_count()==0):
 		return;
-	
+
 	#
 	if(get_tree().is_editor_hint()): return;
 	if(get_child_count()==0): return;
-	
+
 	#
 	ensureInitStateIdIsSet();
-	
+
 	#
 	states = {}; #to be sure
 	STATE = {};  #to be sure
@@ -142,18 +142,18 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 				state2Add.logicRoot = get_node(path2LogicRoot);
 				state2Add.fsm = self;
 				state2Add.stateInit(inStatesParam1,inStatesParam2,inStatesParam3,inStatesParam4, inStatesParam5);
-	
+
 	#
 	initTransitions(inStatesParam1, inStatesParam2, inStatesParam3, inStatesParam4, inStatesParam5);
 
 	#
 	if(onlyActiveStateOnTheScene):
-		
+
 		#remove transitions
 		var transitions = transitionsNode.get_children();
 		for transition in transitions:
 			transitionsNode.remove_child(transition);
-		
+
 		#states
 		var statesKeys = states.keys();
 		for stateKey in statesKeys:
@@ -169,10 +169,10 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 		currentState = statesNode.get_children()[0];
 		currentStateID = currentState.get_name();
 	ensureTransitionsForStateIDAreReady(currentStateID)
-	
+
 	#
-	currentState.enter(); 
-	
+	currentState.enter();
+
 	#
 	initUpdateMode();
 
@@ -196,7 +196,7 @@ func initTransitions(inParam1, inParam2, inParam3, inParam4, inParam5):
 				stateTransitionsMap[state.get_name()].append(transition);
 
 func ensureInitStateIdIsSet():
-	if(initStateID == ""): 
+	if(initStateID == ""):
 		initStateID = statesNode.get_child(0).get_name();
 
 func initHolderNodes():
@@ -207,7 +207,7 @@ func initHolderNodes():
 		add_child(statesNode);
 		statesNode.set_name("States");
 		statesNode.set_owner(get_tree().get_edited_scene_root());
-	
+
 	if(has_node("Transitions")):
 		transitionsNode = get_node("Transitions");
 	else:
@@ -216,7 +216,7 @@ func initHolderNodes():
 		transitionsNode.set_name("Transitions");
 		transitionsNode.set_owner(get_tree().get_edited_scene_root());
 
-func createEmptyHolderNode(): 
+func createEmptyHolderNode():
 	if(self extends Node2D):
 		return Node2D.new();
 	elif(self extends Spatial):
@@ -242,32 +242,32 @@ func getState():
 func changeStateTo(inNewStateID):
 	if(currentStateID!=inNewStateID):
 		setState(inNewStateID);
-	
+
 func setState(inStateID, inArg0=null,inArg1=null, inArg2=null):
-	
+
 	#
 	var prevStateID = currentStateID;
 	currentState.exit(inStateID);
 	archiveStateInHistory(prevStateID)
-	
+
 	#
 	if(onlyActiveStateOnTheScene):
-		
+
 		#states
 		statesNode.remove_child(currentState);
 		statesNode.add_child(states[inStateID]);
-		
+
 		#transitions
 		var transitions = transitionsNode.get_children();
 		for transition in transitions: transitionsNode.remove_child(transition);
 		ensureTransitionsForStateIDAreReady(inStateID);
-		
+
 	#
 	currentState = states[inStateID];
 	currentState.enter(prevStateID, lastlyUsedTransitionID, inArg0, inArg1, inArg2);
 	currentStateID = currentState.get_name()
 	stateTime = 0.0;
-	
+
 	#
 	emit_signal("stateChanged", currentStateID, prevStateID);
 
@@ -277,8 +277,8 @@ func ensureTransitionsForStateIDAreReady(inStateID):
 	for newTransition in newTransitions:
 		if(!transitionsNode.has_node(newTransition.get_name())):
 			transitionsNode.add_child(newTransition);
-		newTransition.prepare(inStateID);
-	
+		newTransition.prepareTransition(inStateID);
+
 func getLogicRoot():
 	return get_node(path2LogicRoot);
 
@@ -321,9 +321,9 @@ func removeConnection2TransitionFromState(inStateID, inTransitionID):
 	transitionNode.removeSourceConnection(stateNode);
 
 func addTransitionBetweenStatesIDs(inSourceStateID, inTargetStateID, inTransitionID):
-	#assert: you should create transition from inspector first! (don't make a lot of sense to create it from code: 
+	#assert: you should create transition from inspector first! (don't make a lot of sense to create it from code:
 	#you will need to implement custom transition logic anyway)
-	assert transitionsNode.has_node(inTransitionID); 
+	assert transitionsNode.has_node(inTransitionID);
 	var transitionNode = transitionsNode.get_node(inTransitionID);
 	transitionNode.addSourceStateNode(statesNode.get_node(inSourceStateID));
 	transitionNode.setTargetStateNode(statesNode.get_node(inTargetStateID));
@@ -339,7 +339,7 @@ func archiveStateInHistory(inState2Archive):
 func getPrevStateFromHistory(inHowFar=0): #0 means prev
 	var historicState = statesHistory[inHowFar];
 	return historicState;
-	
+
 
 #### setters bellow are used by tool
 #######
@@ -376,7 +376,7 @@ func update(inDeltaTime, param0=null, param1=null, param2=null, param3=null, par
 	assert((typeof(nextStateID)==TYPE_STRING));  #ERROR: currentState.computeNextState() is not returning String!" Take a look at currentStateID variable in debugger
 	if(nextStateID!=currentStateID):
 		setState(nextStateID);
-	
+
 	stateTime += inDeltaTime;
 	return currentState.update(inDeltaTime, param0, param1, param2, param3, param4);
 
@@ -391,7 +391,7 @@ func checkTransitionsAndGetNextStateID(inDeltaTime, param0, param1, param2, para
 			lastlyUsedTransitionID = transition.get_name();
 			return transition.getTargetStateID();
 	return currentStateID;
-	
+
 
 func transitionReady2BeChecked(inDeltaTime, transition):
 	if(transition.intervalBetweenChecks>0.0):
@@ -457,27 +457,27 @@ func createTransition(inTransitionName, inScriptPath = null):
 
 func createElement(inElementName, inHolderNode, inElementsSubfolder, inTemplateScriptPath, inAlreadyExistingScript2Use = null):
 	if (inElementName==null) || (inElementName.empty()) || has_node(inElementName): return;
-	
+
 	#
 	var owner = get_owner();
-	
+
 	#
 	var dirMaker = Directory.new();
 	var dirPath = getFolderFilepath4Element(inElementName, inElementsSubfolder);
 	dirMaker.make_dir_recursive(dirPath);
-	
+
 	var scriptFilePath = dirPath + "/" + inElementName + ".gd";
 	var sceneFilePath = dirPath + "/" + inElementName + ".tscn";
-	
+
 	#
 	var script = inAlreadyExistingScript2Use;
 	if(script==null):
 		var saveGameFile = File.new();
 		saveGameFile.open(scriptFilePath, File.WRITE);
-		saveGameFile.store_string(load(inTemplateScriptPath).get_source_code()); 
+		saveGameFile.store_string(load(inTemplateScriptPath).get_source_code());
 		saveGameFile.close();
 		script = load(scriptFilePath);
-	
+
 	#
 	var scnStateNode = Node.new();
 	scnStateNode.set_script(script);
@@ -485,7 +485,7 @@ func createElement(inElementName, inHolderNode, inElementsSubfolder, inTemplateS
 	var packedScn = PackedScene.new();
 	packedScn.pack(scnStateNode);
 	ResourceSaver.save(sceneFilePath, packedScn);
-	
+
 	var scn2Add = load(sceneFilePath).instance();
 	inHolderNode.add_child(scn2Add)
 	scn2Add.set_owner(get_tree().get_edited_scene_root());
@@ -508,7 +508,7 @@ func _get_property_list():
 	for state in currentStatesList:
 		statesListString = statesListString + state.get_name() + ",";
 	statesListString.erase(statesListString.length()-1,1)
-	
+
 	return [
 		{
             "hint": PROPERTY_HINT_ENUM,
@@ -544,7 +544,7 @@ func _get_property_list():
     ];
 func _get(property):
 	if(property == INSP_SUBDIR_4_STATES):
-		return additionalSubDirectory4FSMData;        
+		return additionalSubDirectory4FSMData;
 	elif(property==INSP_INIT_STATE):
 		return initStateID;
 	elif(property==GRAPH_DATA):
@@ -577,10 +577,10 @@ func hideAllVisibleStatesExceptInitOne():
 func callMethodInStatesAndAllDirectChilds(inMethodName):
 	var states = statesNode.get_children();
 	for state in states:
-		if(state.get_name()==initStateID): 
+		if(state.get_name()==initStateID):
 			showStateOrItsDirectChilds(state);
 			continue;
-		if(state.has_method(inMethodName)): 
+		if(state.has_method(inMethodName)):
 			state.call(inMethodName);
 			continue;
 		var stateChilds = state.get_children();
@@ -588,7 +588,7 @@ func callMethodInStatesAndAllDirectChilds(inMethodName):
 			if(stateChild.has_method(inMethodName)): stateChild.call(inMethodName);
 
 func showStateOrItsDirectChilds(inState):
-	if(inState.has_method("show")): 
+	if(inState.has_method("show")):
 		inState.show;
 	else:
 		var stateChilds = inState.get_children();

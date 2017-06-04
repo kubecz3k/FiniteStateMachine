@@ -4,6 +4,9 @@ extends "res://addons/net.kivano.fsm/content/FSMTransition.gd";
 # For more informations check script attached to FSM node
 # All params are optional and will be used only if you decide to manually initialize FSM (fsm.init())
 # or update manually (fsm.update(deltaTime))
+#
+# You can also use accomplish() method on this transition to mark it as accomplised until next related 
+# state activation (you can use it from code, or connect some signals to accomplish() method)
 
 ##################################################################################
 #####  Variables (Constants, Export Variables, Node Vars, Normal variables)  #####

@@ -19,6 +19,7 @@ onready var logicRoot;
 onready var targetStateNode; 
 
 var timeSinceLastCheck = 0.0;
+var transAccomplished = false;
 
 func _ready():
 	if(!get_tree().is_editor_hint()): return;
@@ -55,9 +56,6 @@ func refreshSourceNodes():
 #			if(!sourceStateNodes.has(get_node(sourceStatePath))):
 #				sourceStateNodes.append(get_node(sourceStatePath));
 
-func getTargetStateID():
-	return targetStateNode.get_name(); #cant assume targetStateNode is in the tree at the moment 
-
 func removeSourceConnection(inSourceStateNode):
 	path2SourceStates.erase(get_path_to(inSourceStateNode));
 
@@ -90,6 +88,14 @@ func getTargetFSMState():
 	if(has_node(path2TargetState)):
 		return get_node(path2TargetState);
 
+#######
+### Public
+func accomplish():
+	transAccomplished = true;
+
+func getTargetStateID():
+	return targetStateNode.get_name(); #cant assume targetStateNode is in the tree at the moment 
+
 #rather private ones
 func fixCommonProblems():
 	if(getTargetFSMState()!=null):
@@ -98,8 +104,12 @@ func fixCommonProblems():
 
 func check(inDeltaTime, inParam0=null, inParam1=null, inParam2=null, inParam3=null, inParam4=null):
 	if !get_tree().is_editor_hint():
+		if(transAccomplished): return true;
 		return transitionCondition(inDeltaTime, inParam0, inParam1, inParam2, inParam3, inParam4);
 
+func prepareTransition(inNewStateID):
+	transAccomplished = false;
+	return prepare(inNewStateID);
 
 ######################################
 ####### Implement those below ########
