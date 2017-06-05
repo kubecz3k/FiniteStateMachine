@@ -9,3 +9,4 @@ There are couple of options inside FSM node:
 - additionally you can choose where to write state transition logic, in manual mode you can manually change states from every point of your code. Or you can choose to hardcode transitions inside state scripts. In this scenario FSM after updating current state logic will ask this state if transition should happen. In this case you need to implement computeNextState() function and return next state name. 
 
 For more informations on various options and how to use this node, check readme section of FSM node script.
+system requirements: Godot 2.1.3 maximum, support for 3.0 COMING SOON
