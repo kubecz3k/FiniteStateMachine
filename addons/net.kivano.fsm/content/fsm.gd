@@ -1,6 +1,7 @@
 tool
 extends Node
 ##################################### README  ###############################
+# @author: Jakub Grzesik
 #
 # * To create new state check  "Create New:" subsection in FSM inspector
 #
@@ -297,6 +298,9 @@ func getLastlyUsedTransition():
 
 func lastlyUsedTransitionID():
 	return lastlyUsedTransitionID;
+
+func getActiveTransitions():
+	return stateTransitionsMap[currentStateID];
 
 ### less often used below
 ######
