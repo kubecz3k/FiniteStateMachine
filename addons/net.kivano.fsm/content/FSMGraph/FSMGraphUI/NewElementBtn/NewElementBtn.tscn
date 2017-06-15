@@ -256,6 +256,8 @@ max_lines_visible = -1
 
 [connection signal="pressed" from="btnCreate" to="." method="_on_btnCreate_pressed"]
 
+[connection signal="text_entered" from="elementName" to="." method="_on_elementName_text_entered"]
+
 [connection signal="pressed" from="btnCancel" to="." method="_on_btnCancel_pressed"]
 
 
