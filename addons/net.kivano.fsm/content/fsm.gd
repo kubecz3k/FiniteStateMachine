@@ -261,14 +261,14 @@ func setState(inStateID, inArg0=null,inArg1=null, inArg2=null):
 		#transitions
 		var transitions = transitionsNode.get_children();
 		for transition in transitions: transitionsNode.remove_child(transition);
-		ensureTransitionsForStateIDAreReady(inStateID);
-
+	
 	#
-	currentState = states[inStateID];
-	currentState.enter(prevStateID, lastlyUsedTransitionID, inArg0, inArg1, inArg2);
-	currentStateID = currentState.get_name()
 	stateTime = 0.0;
-
+	currentState = states[inStateID];
+	currentStateID = currentState.get_name()
+	ensureTransitionsForStateIDAreReady(inStateID);
+	currentState.enter(prevStateID, lastlyUsedTransitionID, inArg0, inArg1, inArg2);
+	
 	#
 	emit_signal("stateChanged", currentStateID, prevStateID);
 
@@ -341,6 +341,7 @@ func archiveStateInHistory(inState2Archive):
 	statesHistory.push_front(inState2Archive)
 
 func getPrevStateFromHistory(inHowFar=0): #0 means prev
+	if(statesHistory.size()<=inHowFar): return null;
 	var historicState = statesHistory[inHowFar];
 	return historicState;
 
