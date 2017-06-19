@@ -1,0 +1,89 @@
+[gd_scene load_steps=4 format=1]
+
+[ext_resource path="res://addons/net.kivano.fsm/content/FSMDebugger/FSMDebugger.gd" type="Script" id=1]
+[ext_resource path="res://addons/net.kivano.fsm/assets/state_9path.png" type="Texture" id=2]
+[ext_resource path="res://addons/net.kivano.fsm/assets/small_transition_9path.png" type="Texture" id=3]
+
+[node name="FSMDebugger" type="Node2D"]
+
+visibility/opacity = 0.8
+transform/pos = Vector2( 0, -50 )
+z/z = 1
+script/script = ExtResource( 1 )
+
+[node name="StateText" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -85.0
+margin/top = -7.0
+margin/right = 87.0
+margin/bottom = 7.0
+text = "SOME_AWESOME_STATE"
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="Patch9Frame" type="Patch9Frame" parent="StateText"]
+
+visibility/behind_parent = true
+anchor/right = 1
+anchor/bottom = 1
+rect/scale = Vector2( 0.5, 0.5 )
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = -8.0
+margin/right = -166.0
+margin/bottom = -37.0
+texture = ExtResource( 2 )
+patch_margin/left = 25
+patch_margin/top = 25
+patch_margin/right = 25
+patch_margin/bottom = 25
+
+[node name="PrevTransition" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -61.0
+margin/top = 21.0
+margin/right = 62.0
+margin/bottom = 35.0
+text = " "
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="Patch9Frame1" type="Patch9Frame" parent="PrevTransition"]
+
+visibility/opacity = 0.9
+visibility/behind_parent = true
+anchor/right = 1
+anchor/bottom = 1
+rect/scale = Vector2( 0.5, 0.5 )
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = -17.0
+margin/top = -6.0
+margin/right = -173.0
+margin/bottom = -30.0
+texture = ExtResource( 3 )
+patch_margin/left = 25
+patch_margin/top = 25
+patch_margin/right = 25
+patch_margin/bottom = 25
+
+

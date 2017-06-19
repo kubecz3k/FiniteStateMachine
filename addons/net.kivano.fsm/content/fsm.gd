@@ -62,8 +62,13 @@ extends Node
 #    STATE: you can use this dictionary to access state id. Using is is recommended because it's less error prone than
 #        entering states ids by hand. ex. fsm.changeStateTo(fsm.STATE.START) <- when one of your states is named 'START')
 
-#
+##################################################################################
+#########                     Imported classes/scenes                    #########
+##################################################################################
 var StateScn = preload("res://addons/net.kivano.fsm/content/FSMState.gd");
+var FSMDebuggerScn = preload("res://addons/net.kivano.fsm/content/FSMDebugger/FSMDebugger.tscn");
+var FSMSpatialDebuggerScn = preload("res://addons/net.kivano.fsm/content/FSMDebugger/FSMDebugger3D.tscn");
+
 ##################################################################################
 #########                       Signals definitions                      #########
 ##################################################################################
@@ -92,6 +97,7 @@ export (NodePath) var path2LogicRoot = NodePath("..");
 export (bool) var onlyActiveStateOnTheScene = false setget setOnlyActiveStateOnScene;
 export (bool) var initManually = false;
 export (int, "Manual", "Process", "Fixed") var updateMode = UPDATE_MODE_PROCESS;
+export (bool) var enableDebug = false;
 
 var stateTransitionsMap = {};
 
@@ -128,7 +134,16 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 	#
 	if(get_tree().is_editor_hint()): return;
 	if(get_child_count()==0): return;
-
+	
+	if(enableDebug):
+		var debugger;
+		if(get_parent() extends Spatial):
+			debugger = FSMSpatialDebuggerScn.instance();
+		else:
+			debugger = FSMDebuggerScn.instance();
+		add_child(debugger);
+		debugger.manualInit(self);
+	
 	#
 	ensureInitStateIdIsSet();
 
