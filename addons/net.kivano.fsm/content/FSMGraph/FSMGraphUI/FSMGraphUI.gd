@@ -44,6 +44,16 @@ func manualInit(inFsm):
 	graph.manualInit(inFsm);
 
 func _input(event):
+	
+	#fast preview with ctrl+shift+f
+	if(event.type==InputEvent.KEY):
+		if(event.is_pressed() && event.scancode==KEY_F && event.shift && event.control):
+			if(is_visible()):
+				hide();
+			else:
+				show();
+			get_tree().set_input_as_handled();
+	
 	if(event.type==InputEvent.MOUSE_BUTTON):
 		if(event.global_pos.y<get_global_pos().y):
 			if(event.global_pos.x<(get_rect().size).x):
