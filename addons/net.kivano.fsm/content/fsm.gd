@@ -111,6 +111,7 @@ var lastlyUsedTransitionID = null;
 ##################################################################################
 func _ready():
 	toolInit();
+	add_to_group("FSM");
 	if(initManually):
 		return;
 	init();
