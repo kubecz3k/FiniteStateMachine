@@ -45,9 +45,9 @@ func manualInit(inFsm):
 
 func _input(event):
 	
-	#fast preview with ctrl+shift+f
+	#fast preview with alt+shift+f
 	if(event.type==InputEvent.KEY):
-		if(event.is_pressed() && event.scancode==KEY_F && event.shift && event.control):
+		if(event.is_pressed() && event.scancode==KEY_F && event.alt && event.control):
 			if(is_visible()):
 				hide();
 			else:
