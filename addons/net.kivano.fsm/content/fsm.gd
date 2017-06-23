@@ -200,6 +200,9 @@ func initUpdateMode():
 
 func initTransitions(inParam1, inParam2, inParam3, inParam4, inParam5):
 	TRANSITION = {};#to be sure
+	for state in statesNode.get_children(): #ensure even states without transitions are here
+		stateTransitionsMap[state.get_name()] = [];
+
 	var transitions = transitionsNode.get_children()
 	for transition in transitions:
 		TRANSITION[transition.get_name()] = transition.get_name();
