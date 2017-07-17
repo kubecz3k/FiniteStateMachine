@@ -1,7 +1,7 @@
 tool
 extends Control
 ################################### R E A D M E ##################################
-# 
+#
 #
 #
 
@@ -47,7 +47,10 @@ func _notification(what):
 		arrows = get_node("arrows");
 	elif(what == NOTIFICATION_READY):
 		setName(name);
-#		dragArrow.hide();
+		dragArrow.target = get_global_position() + Vector2(200,0);
+		yield(get_tree().create_timer(0.01), "timeout");
+		dragArrow.hide();
+
 
 func manualInit(inRelatedFsm):
 	if(inRelatedFsm!=null):
@@ -81,16 +84,16 @@ func setName(inName):
 func getInputTrackingNode4GraphState(inSourceGraphState):
 #	calculateNewArrowPointPosition(inSourceGraphState);
 #	return get_node("arrowPoint2Position");
-	return findNearestNodeFromArray(inSourceGraphState.get_global_pos(),get_node("inputSocketPositions").get_children());
+	return findNearestNodeFromArray(inSourceGraphState.get_global_position(),get_node("inputSocketPositions").get_children());
 
 func calculateNewArrowPointPosition(inSourceNodePos):
-	var nearestTrackingNode = findNearestNodeFromArray(inSourceNodePos.get_global_pos(),get_node("inputSocketPositions").get_children());
-	return nearestTrackingNode.get_global_pos();
+	var nearestTrackingNode = findNearestNodeFromArray(inSourceNodePos.get_global_position(),get_node("inputSocketPositions").get_children());
+	return nearestTrackingNode.get_global_position();
 
 
 func getGlobalCenterPos():
-#	return get_pos(inNewPos) - get_size()/2
-	return get_node("inputSocketPositions").get_global_pos();
+#	return get_position(inNewPos) - get_size()/2
+	return get_node("inputSocketPositions").get_global_position();
 
 func isConnected2(inGraphNode):
 	for arrow in arrows.get_children():
@@ -112,30 +115,33 @@ func isConnected2(inGraphNode):
 ##################################################################################
 #########                       Connected Signals                        #########
 ##################################################################################
+func _on_TranslationFixIntervaler_timeout():
+	set_global_position(Vector2(round(get_global_position().x), round(get_global_position().y)));
+
 #		ownerFsmRef.get_ref().getTransition(get_name()).devLog = str(leftBtn);
 var lastlyClickedAt = 0;
-func _on_StateRepresentation_input_event( ev ):
-	if(ev.type==InputEvent.MOUSE_BUTTON):
+func _on_GraphNode_gui_input( ev ):
+	if(ev is InputEventMouseButton):
 		isMousePressed = ev.is_pressed();
 		if(!isMousePressed):
 			dragArrow.hide();
 			if(ev.control || (ev.button_index & BUTTON_RIGHT)):
-				emit_signal("arrowDragEnd", self, ev.global_pos, 0);
+				emit_signal("arrowDragEnd", self, ev.global_position, 0);
 			emit_signal("movementEnd", self);
 		elif(ev.button_index & BUTTON_LEFT):
-			if((lastlyClickedAt + 250) > OS.get_ticks_msec()): 
+			if((lastlyClickedAt + 250) > OS.get_ticks_msec()):
 				emit_signal("doubleClick", self);
 			else:
 				emit_signal("singleClick", self);
 			lastlyClickedAt = OS.get_ticks_msec();
-	elif(ev.type==InputEvent.MOUSE_MOTION):
+	elif(ev is InputEventMouseMotion):
 		var leftBtn = (ev.button_mask & BUTTON_MASK_LEFT);
 		var rightBtn = (ev.button_mask & BUTTON_MASK_RIGHT);
 		if(ev.control&&(leftBtn && isMousePressed) ||  rightBtn):
 			dragArrow.show();
-			dragArrow.target =ev.global_pos;
+			dragArrow.target =ev.global_position;
 		elif(isMousePressed && leftBtn):
-			setCenterGlobalPos(ev.global_pos);
+			setCenterGlobalPos(ev.global_position);
 
 func onArrowRemoveConnectionRequest(inTargetGraphNode):
 	emit_signal("connectionRemoveRequest", self, inTargetGraphNode);
@@ -158,10 +164,10 @@ func createNewArrowAndConnect2(inTagetGraphNode):
 #		ownerFsmRef.get_ref().getTransition(get_name()).devLog ="creating arrow in " + get_name() + " target: " + inTagetGraphNode.get_parent().get_name();
 
 func setCenterGlobalPos(inNewGlobalPos):
-	set_global_pos(inNewGlobalPos - get_size()/2);
+	set_global_position(inNewGlobalPos - get_size()/2);
 
 func setCenterPos(inNewPos):
-	set_pos(inNewPos - get_size()/2)
+	set_position(inNewPos - get_size()/2)
 
 ##################################################################################
 #########                         Inner Methods                          #########
@@ -174,19 +180,18 @@ static func returnEmptyWeakRef():
 
 static func findNearestNodeFromArray(inTestPoint, inCollection, maxDstSquared = -1, spatial2Ignore = null, ignoreSpatialFunc=null):
 	var nearestCandidate = getFirstDifferentItem(inCollection, spatial2Ignore);
-	var nearestDst = nearestCandidate.get_global_pos().distance_squared_to(inTestPoint);
+	var nearestDst = nearestCandidate.get_global_position().distance_squared_to(inTestPoint);
 	for item in inCollection:
 		if(item == spatial2Ignore): continue;
-		var pos = item.get_global_pos();
+		var pos = item.get_global_position();
 		var currentDst = pos.distance_squared_to(inTestPoint);
-		if(currentDst<nearestDst): 
+		if(currentDst<nearestDst):
 			if(ignoreSpatialFunc!=null):
 				if(ignoreSpatialFunc.call_func(item)): continue;
-				
+
 			nearestCandidate = item;
 			nearestDst = currentDst;
-	
-	#
+
 	if(maxDstSquared==-1): return nearestCandidate;
 	if(nearestDst<=maxDstSquared): return nearestCandidate;
 	return null;
@@ -199,5 +204,3 @@ static func getFirstDifferentItem(inCollection, inDiffrentThan):
 ##################################################################################
 #########                         Inner Classes                          #########
 ##################################################################################
-
-

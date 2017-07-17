@@ -46,7 +46,7 @@ func manualInit(inFsm):
 func _input(event):
 	
 	#fast preview with alt+shift+f
-	if(event.type==InputEvent.KEY):
+	if(event is InputEventKey):
 		if(event.is_pressed() && event.scancode==KEY_F && event.alt && event.control):
 			if(is_visible()):
 				hide();
@@ -54,11 +54,11 @@ func _input(event):
 				show();
 			get_tree().set_input_as_handled();
 	
-	if(event.type==InputEvent.MOUSE_BUTTON):
-		if(event.global_pos.y<get_global_pos().y):
-			if(event.global_pos.x<(get_rect().size).x):
+	if(event is InputEventMouseButton):
+		if(event.global_position.y<get_global_position().y):
+			if(event.global_position.x<(get_rect().size).x):
 				hide(); #user probably want to click '2d/3d/Script/AssetLib'
-		elif((event.global_pos.x>get_rect().size.x) && (event.global_pos.x>get_viewport().get_visible_rect().size.x*0.95)):
+		elif((event.global_position.x>get_rect().size.x) && (event.global_position.x>get_viewport().get_visible_rect().size.x*0.95)):
 			hide(); #quite possible he is clicking on script icon in scene tree
 		
 
@@ -82,9 +82,9 @@ func _on_FSMGraph_openScriptRequest( inFsmNode ):
 
 func _on_NewElementBtn_stateCreateRequest( inStateName ):
 	if(lastCreateRequestFromGraphNode!=null):
-		graph.createStateGraphAndFSMNodeAndConnect2(inStateName, newElementBtn.get_global_pos(),lastCreateRequestFromGraphNode);
+		graph.createStateGraphAndFSMNodeAndConnect2(inStateName, newElementBtn.get_global_position(),lastCreateRequestFromGraphNode);
 	else:
-		graph.createStateGraphAndFSMNode(inStateName, newElementBtn.get_global_pos(),lastCreateRequestFromGraphNode);
+		graph.createStateGraphAndFSMNode(inStateName, newElementBtn.get_global_position(),lastCreateRequestFromGraphNode);
 
 var prevTransitionNameCreateRequest = "";
 func _on_NewElementBtn_transitionCreateRequest( inTransitionName, inCreateScript):
@@ -95,14 +95,14 @@ func _on_NewElementBtn_transitionCreateRequest( inTransitionName, inCreateScript
 	
 	prevTransitionNameCreateRequest = inTransitionName;
 	if(inCreateScript):
-		graph.createTransitionGraphAndFSMNodeAndConnect2(inTransitionName, newElementBtn.get_global_pos(), lastCreateRequestFromGraphNode, null);
+		graph.createTransitionGraphAndFSMNodeAndConnect2(inTransitionName, newElementBtn.get_global_position(), lastCreateRequestFromGraphNode, null);
 	else:
 		var dirPath = fsm.get_owner().get_filename().get_base_dir() + "/" + fsm.additionalSubDirectory4FSMData;
 		fileChooserUI.set_current_dir(dirPath);
 		get_node("transitionScriptChooseDialog").popup_centered_ratio();
 
 func _on_transitionScriptChooseDialog_file_selected( scriptPath ):
-	graph.createTransitionGraphAndFSMNodeAndConnect2(prevTransitionNameCreateRequest, newElementBtn.get_global_pos(), lastCreateRequestFromGraphNode, scriptPath);
+	graph.createTransitionGraphAndFSMNodeAndConnect2(prevTransitionNameCreateRequest, newElementBtn.get_global_position(), lastCreateRequestFromGraphNode, scriptPath);
 
 func _on_FSMGraph_arrowDragFinishedAtEmptySpace( inFromGraphNode, inAtPos ):
 	lastCreateRequestFromGraphNode = inFromGraphNode;
@@ -113,7 +113,7 @@ func _on_FSMGraph_arrowDragFinishedAtEmptySpace( inFromGraphNode, inAtPos ):
 	
 func _on_btnNewState_pressed():
 	lastCreateRequestFromGraphNode = null;
-	showAddNewStateUI(newElementBtn.get_global_pos());
+	showAddNewStateUI(newElementBtn.get_global_position());
 
 func _on_btnHelp_pressed():
 	if(get_node("HelpText").is_visible()):

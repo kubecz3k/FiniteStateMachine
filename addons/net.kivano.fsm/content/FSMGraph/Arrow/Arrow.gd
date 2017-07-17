@@ -1,11 +1,11 @@
 tool
 extends Node2D
-#######This code was originally written by 
+#######This code was originally written by
 ### Lars Kokemohr. Original Arrow plugin can be found on Godot plugin store, it's released on MIT license.
 # https://bitbucket.org/lkokemohr/godot_arrow_plugin
 signal removeConnectionRequest(to);
 
-export(NodePath) var target_node_path = null setget set_target_node_path
+export(NodePath) var target_node_path = NodePath() setget set_target_node_path
 var target_node = null
 export(Vector2) var target = null setget set_target
 
@@ -32,30 +32,32 @@ onready var closeIcon = get_node("CloseIcon");
 func _enter_tree():
 	if is_visible():
 		set_process(true)
-	
 	if(beginningColor == null):
 		beginningColor = color;
 
 func _ready():
 	if is_visible():
 		set_process(true);
+
 	if(!closeIconActive):
 		if(has_node("CloseIcon")):
 			closeIcon.queue_free();
 			closeIcon = null;
 
+
+
 func setPointingOnState(inPointingOnState):
 	pointingOnState = inPointingOnState;
 	if(pointingOnState):
 		end_offset = 5;
-	
+
 	if(pointingOnState):
 		beginningColor = color;
 
 func setWithArrow(inWithArrow):
 	with_arrow = inWithArrow;
 	update();
-	
+
 
 func setBegginingColor(inColor):
 	beginningColor = inColor;
@@ -70,25 +72,27 @@ func getTargetNode():
 func _draw():
 	if not is_visible():
 		return
-	
+
 	if target == null:
 		return
-	
+
 	if color == null:
 		color = Color(1,1,1,1)
-	
-	var points = Vector2Array()
-	var colors = ColorArray()
-	
-	var arrowvec = target - get_global_pos()
+
+	var points = PoolVector2Array()
+	var colors = PoolColorArray()
+
+	var arrowvec = target - get_global_position()
 	var sidedir = Vector2(arrowvec.y, -arrowvec.x).normalized()
 	var sidevec = sidedir * width * 0.5
 	var pointvec = arrowvec.normalized() * width
-	
+
 	var startoffset = arrowvec.normalized() * start_offset
 	var endoffset = -arrowvec.normalized() * end_offset
 	var sideoffset = sidedir * side_offset
-	
+
+	if(arrowvec.length()<50): return;
+
 	points.append(sideoffset + startoffset + sidevec)
 	colors.append(beginningColor)
 	points.append(sideoffset + endoffset + sidevec + arrowvec - pointvec)
@@ -106,13 +110,13 @@ func _draw():
 	colors.append(color)
 	points.append(sideoffset + startoffset - sidevec)
 	colors.append(beginningColor)
-	
+
 	self.draw_polygon(points, colors)
-	
+
 	if(getTargetNode()!=null) && (closeIcon!=null):
 #		get_node("Label").set_text(getTargetNode().get_path());
-		var middlePos = (get_global_pos() + target)/2.0;
-		closeIcon.set_global_pos(middlePos);
+		var middlePos = (get_global_position() + target)/2.0;
+		closeIcon.set_global_position(middlePos);
 	elif(closeIcon!=null):
 		closeIcon.hide();
 
@@ -141,9 +145,10 @@ func _process(delta):
 		if(target_node.has_method("calculateNewArrowPointPosition")):
 			set_target(target_node.calculateNewArrowPointPosition(self))
 		else:
-			set_target(target_node.get_global_pos())
-	if get_global_pos() != cached_pos:
-		cached_pos = get_global_pos()
+			set_target(target_node.get_global_position())
+			
+	if get_global_position() != cached_pos:
+		cached_pos = get_global_position()
 		update()
 
 func is_visible():

@@ -8,21 +8,22 @@ func _enter_tree():
 	add_custom_type("FSMControl","Control", preload("content/fsm.gd"), preload("assets/icoControl.png"))
 	add_custom_type("FSM2D","Node2D", preload("content/fsm.gd"), preload("assets/ico2d.png"))
 	add_custom_type("FSM3D","Spatial", preload("content/fsm.gd"), preload("assets/ico3d.png"))
-	
+
 	editorInstance = FSMGraphUIscn.instance();
-	get_editor_viewport().add_child(editorInstance)
-	get_editor_viewport().connect("resized", self, "on_resized")
-	on_resized()
+	print("Editor instance script: ", editorInstance.get_script());
+	get_editor_viewport().add_child(editorInstance);
+	get_editor_viewport().connect("resized", self, "on_resized");
+	on_resized();
 	editorInstance.connect("openScriptRequest", self, "onScriptOpenRequest");
 	editorInstance.connect("selectNodeRequest", self, "onNodeSelectRequest");
-	
+
 	get_selection().connect("selection_changed", self, "onEditorTreeSelectionChanged");
 
 func _exit_tree():
 	remove_custom_type("FSMControl")
 	remove_custom_type("FSM2D")
 	remove_custom_type("FSM3D")
-	
+
 	if(editorInstance!=null):
 		editorInstance.queue_free();
 	queue_free()
@@ -38,18 +39,18 @@ func apply_changes():
 		editorInstance.save();
 
 var handlesRecentlyReturned = false;
-#this method is useless for some reason. 
+#this method is useless for some reason.
 #it never enter here for aything else than the simplest Node (why?)
 #implemented editor selection onEditorTreeSelectionChanged signal as a workaround
-func handles(object): 
+func handles(object):
 	return false;
-	return (object extends preload("content/fsm.gd")) 
-	if(!object extends Node): return false;
-	
+	return (object is preload("content/fsm.gd"))
+	if(!object is Node): return false;
+
 	var parentName = object.get_parent().get_name();
 	var isInsideFsm =  (parentName == "States") || (parentName == "Transitions") || (parentName.begins_with("FSM"));
-	
-	if(object extends preload("content/fsm.gd")):
+
+	if(object is preload("content/fsm.gd")):
 		editorInstance.manualInit(object);
 		return true;
 	elif(isInsideFsm):
@@ -68,8 +69,8 @@ func onEditorTreeSelectionChanged():
 	var selectedNodes = get_selection().get_selected_nodes()
 	if(selectedNodes.size()!=1): return;
 	var selectedNode = selectedNodes[0];
-	
-	if(selectedNode extends preload("content/fsm.gd")):
+
+	if(selectedNode is preload("content/fsm.gd")):
 		editorInstance.manualInit(selectedNode);
 		make_visible(true);
 	elif(selectedNode.has_node("..")):
@@ -83,7 +84,7 @@ func onEditorTreeSelectionChanged():
 func on_resized():
 	var viewport_size = get_editor_viewport().get_size();
 	editorInstance.set_size(viewport_size);
-	editorInstance.set_global_pos(get_editor_viewport().get_global_pos());
+	editorInstance.set_global_position(get_editor_viewport().get_global_position());
 	editorInstance.graph.set_size(viewport_size);
 
 func onScriptOpenRequest(inNodeWithScript):

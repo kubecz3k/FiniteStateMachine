@@ -116,6 +116,9 @@ var lastlyUsedTransitionID = null;
 #########                          Init code                             #########
 ##################################################################################
 func _ready():
+	set_process(false);
+	set_fixed_process(false);
+	
 	toolInit();
 	add_to_group("FSM");
 	if(initManually):
@@ -134,16 +137,17 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 	#
 	if(get_tree().is_editor_hint()): return;
 	if(get_child_count()==0): return;
-	
+
 	if(enableDebug):
 		var debugger;
-		if(get_parent() extends Spatial):
+		if(get_parent() is Spatial):
 			debugger = FSMSpatialDebuggerScn.instance();
 		else:
 			debugger = FSMDebuggerScn.instance();
 		add_child(debugger);
+		print("degugger script: ", debugger.get_script());
 		debugger.manualInit(self);
-	
+
 	#
 	ensureInitStateIdIsSet();
 
@@ -152,7 +156,7 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 	STATE = {};  #to be sure
 	var states2Add = statesNode.get_children();
 	for state2Add in states2Add:
-		if(state2Add extends preload("FSMState.gd")):
+		if(state2Add is preload("FSMState.gd")):
 			states[state2Add.get_name()] = state2Add;
 			STATE[state2Add.get_name()] = state2Add.get_name();
 			if(!get_tree().is_editor_hint()):
@@ -237,11 +241,11 @@ func initHolderNodes():
 		transitionsNode.set_owner(get_tree().get_edited_scene_root());
 
 func createEmptyHolderNode():
-	if(self extends Node2D):
+	if(self is Node2D):
 		return Node2D.new();
-	elif(self extends Spatial):
+	elif(self is Spatial):
 		return Spatial.new();
-	elif(self extends Control):
+	elif(self is Control):
 		return Control.new();
 	else:
 		return Node.new();
@@ -280,14 +284,14 @@ func setState(inStateID, inArg0=null,inArg1=null, inArg2=null):
 		#transitions
 		var transitions = transitionsNode.get_children();
 		for transition in transitions: transitionsNode.remove_child(transition);
-	
+
 	#
 	stateTime = 0.0;
 	currentState = states[inStateID];
 	currentStateID = currentState.get_name()
 	ensureTransitionsForStateIDAreReady(inStateID);
 	currentState.enter(prevStateID, lastlyUsedTransitionID, inArg0, inArg1, inArg2);
-	
+
 	#
 	emit_signal("stateChanged", currentStateID, prevStateID);
 

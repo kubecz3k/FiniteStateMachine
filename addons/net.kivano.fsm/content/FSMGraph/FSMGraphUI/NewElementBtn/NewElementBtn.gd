@@ -52,7 +52,7 @@ func appear4StateAtPos(inGlobalAppearPos):
 	conditionLabel.hide();
 
 	title.set_text("CREATE NEW STATE");
-	set_global_pos(inGlobalAppearPos);
+	set_global_position(inGlobalAppearPos);
 	animator.play("fadein");
 	show();
 
@@ -62,7 +62,7 @@ func appear4TransitionAtPos(inGlobalAppearPos):
 	conditionLabel.show();
 
 	title.set_text("CREATE NEW TRANSITION");
-	set_global_pos(inGlobalAppearPos);
+	set_global_position(inGlobalAppearPos);
 	animator.play("fadein");
 	show();
 

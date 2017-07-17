@@ -1,59 +1,73 @@
-[gd_scene load_steps=5 format=1]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/GraphNode/GraphNode.gd" type="Script" id=1]
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/Arrow/Arrow.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/net.kivano.fsm/assets/state_9path.png" type="Texture" id=3]
-[ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/StateGraphNode/InputSocketPosition/InputSocketPosition.gd" type="Script" id=4]
 
 [node name="GraphNode" type="Control"]
 
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 0.0
-margin/right = 117.0
-margin/bottom = 46.0
-script/script = ExtResource( 1 )
+margin_right = 117.0
+margin_bottom = 31.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+script = ExtResource( 1 )
 name = "STATE NAME"
 
 [node name="arrows" type="Control" parent="."]
 
-editor/display_folded = true
-anchor/left = 3
-anchor/top = 3
-anchor/right = 3
-anchor/bottom = 3
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 0.5
-margin/top = 0.0
-margin/right = 0.5
-margin/bottom = 0.0
+anchor_left = 2
+anchor_top = 2
+anchor_right = 2
+anchor_bottom = 2
+margin_left = 0.5
+margin_top = -7.5
+margin_right = 0.5
+margin_bottom = -7.5
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+_sections_unfolded = [ "Rect" ]
 __meta__ = {
 "_edit_lock_": true
 }
 
 [node name="dragArrow" parent="arrows" instance=ExtResource( 2 )]
 
+target_node_path = NodePath("../Control")
+target = Vector2( 200, 0 )
 closeIconActive = false
 end_offset = 35
 
+[node name="Control" type="Control" parent="arrows"]
+
+margin_left = 146.0
+margin_top = -27.0
+margin_right = 186.0
+margin_bottom = 13.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+
 [node name="title" type="Label" parent="."]
 
-anchor/right = 1
-anchor/bottom = 1
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 0
-margin/left = -29.0
-margin/top = 0.0
-margin/right = -27.0
-margin/bottom = 0.0
+anchor_right = 1
+anchor_bottom = 1
+margin_left = -26.0
+margin_top = 1.0
+margin_right = -27.0
+margin_bottom = 6.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 0
 text = "STATE NAME"
 align = 1
 valign = 1
@@ -61,41 +75,52 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="Patch9Frame" type="Patch9Frame" parent="title"]
+[node name="NinePatchRect" type="NinePatchRect" parent="title"]
 
-visibility/behind_parent = true
-anchor/right = 1
-anchor/bottom = 1
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = -10.0
-margin/top = -10.0
-margin/right = -10.0
-margin/bottom = -8.0
+show_behind_parent = true
+anchor_right = 1
+anchor_bottom = 1
+margin_left = -10.0
+margin_top = -13.0
+margin_right = -10.0
+margin_bottom = -13.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 1
 texture = ExtResource( 3 )
-patch_margin/left = 25
-patch_margin/top = 25
-patch_margin/right = 25
-patch_margin/bottom = 25
+patch_margin_left = 25
+patch_margin_top = 25
+patch_margin_right = 25
+patch_margin_bottom = 25
+_sections_unfolded = [ "Anchor", "Patch Margin" ]
 
 [node name="inputSocketPositions" type="Control" parent="."]
 
-anchor/left = 3
-anchor/top = 3
-anchor/right = 3
-anchor/bottom = 3
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 3.5
-margin/top = 1.0
-margin/right = 3.5
-margin/bottom = 1.0
-script/script = ExtResource( 4 )
+anchor_left = 2
+anchor_top = 2
+anchor_right = 2
+anchor_bottom = 2
+margin_left = 0.5
+margin_top = 3.5
+margin_right = 0.5
+margin_bottom = 3.5
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
 
-[connection signal="input_event" from="." to="." method="_on_StateRepresentation_input_event"]
+[node name="TranslationFixIntervaler" type="Timer" parent="."]
+
+process_mode = 1
+wait_time = 3.5
+one_shot = false
+autostart = true
+
+[connection signal="gui_input" from="." to="." method="_on_GraphNode_gui_input"]
+
+[connection signal="timeout" from="TranslationFixIntervaler" to="." method="_on_TranslationFixIntervaler_timeout"]
 
 

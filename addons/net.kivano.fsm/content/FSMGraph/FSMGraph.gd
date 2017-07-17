@@ -1,7 +1,7 @@
 tool
 extends ScrollContainer
 ################################### R E A D M E ##################################
-# 
+#
 #
 #
 
@@ -27,7 +27,7 @@ const StateGraphNodeScript = preload("StateGraphNode/StateGraphNode.gd");
 
 var pernamentData = {};
 var graphNodes;
-var fsmRef= returnEmptyWeakRef(); 
+var fsmRef= returnEmptyWeakRef();
 
 ##################################################################################
 #########                          Init code                             #########
@@ -70,7 +70,7 @@ func refreshFromFSMData():
 		get_parent().hide();
 		return;
 	var fsm = fsmRef.get_ref();
-	
+
 	var states = fsm.getStates();
 	for state in states:
 		createStateGraphNode(Vector2(50,50), state.get_name());
@@ -131,11 +131,11 @@ func onGraphNodeClick(inGraphNode):
 	if(!fsmRef.get_ref()):
 		get_parent().hide();
 		return;
-	
+
 	var node = null;
-	if(inGraphNode extends StateGraphNodeScript):
+	if(inGraphNode is StateGraphNodeScript):
 		node = fsmRef.get_ref().getStateFromID(inGraphNode.get_name());
-	elif(inGraphNode extends TransitionGraphNodeScript):
+	elif(inGraphNode is TransitionGraphNodeScript):
 		node = fsmRef.get_ref().getTransition(inGraphNode.get_name());
 	if(node!=null):
 		emit_signal("selectNodeRequest", node);
@@ -144,27 +144,27 @@ func onGraphNodeDoubleClick(inGraphNode):
 	if(!fsmRef.get_ref()):
 		get_parent().hide();
 		return;
-	
-	
-	if(inGraphNode extends StateGraphNodeScript):
+
+
+	if(inGraphNode is StateGraphNodeScript):
 		var fsmState = fsmRef.get_ref().getStateFromID(inGraphNode.get_name());
 		emit_signal("openScriptRequest", fsmState);
-	elif(inGraphNode extends TransitionGraphNodeScript):
+	elif(inGraphNode is TransitionGraphNodeScript):
 		var fsmTransition = fsmRef.get_ref().getTransition(inGraphNode.get_name());
 		emit_signal("openScriptRequest", fsmTransition);
 
-func _on_FSMGraph_input_event( ev ):
-	if(ev.type == InputEvent.MOUSE_MOTION):
+func _on_FSMGraph_gui_input( ev ):
+	if(ev is InputEventMouseMotion):
 		var middleBtnClicked = (ev.button_mask & BUTTON_MASK_MIDDLE);
 		if(middleBtnClicked):
-			set_v_scroll(get_v_scroll() - ev.relative_y);
-			set_h_scroll(get_h_scroll() - ev.relative_x);
+			set_v_scroll(get_v_scroll() - ev.relative.y);
+			set_h_scroll(get_h_scroll() - ev.relative.x);
 
 func onGraphNodeConnectionRemoveRequest(inSourceGraphNode, inTargetGraphNode):
 	if(!fsmRef.get_ref()):
 		get_parent().hide();
 		return;
-	
+
 	get_node("Label").set_text("inTargetGraphNode: " + inTargetGraphNode.get_name());
 	if(inSourceGraphNode.baseType==GraphNodeScript.TYPE_TRANSITION):
 		fsmRef.get_ref().removeTargetConnection4TransitionID(inSourceGraphNode.get_name());
@@ -183,24 +183,24 @@ func connectGraphNodes(inFromNode, inTargetNode):
 		get_parent().hide();
 		return;
 	var fsm = fsmRef.get_ref();
-	
+
 	inFromNode.createNewArrowAndConnect2(inTargetNode);
 	ensureGraphNodesSignalsConnected();
-	
+
 	var text = get_node("Label").get_text() + " a ";
 	get_node("Label").set_text(text)
 
-	if(inFromNode extends TransitionGraphNodeScript):
+	if(inFromNode is TransitionGraphNodeScript):
 		if(fsm.hasTransition(inFromNode.get_name()) && fsm.hasStateWithID(inTargetNode.get_name())):
 			var transFSMnode = fsm.getTransition(inFromNode.get_name());
 			var stateFSMnode = fsm.getStateFromID(inTargetNode.get_name());
 			transFSMnode.setTargetStateNode(stateFSMnode);
-	elif(inTargetNode extends TransitionGraphNodeScript):
+	elif(inTargetNode is TransitionGraphNodeScript):
 		if(fsm.hasTransition(inTargetNode.get_name()) && fsm.hasStateWithID(inFromNode.get_name())):
 			var transFSMnode = fsm.getTransition(inTargetNode.get_name());
 			var stateFSMnode = fsm.getStateFromID(inFromNode.get_name());
 			transFSMnode.addSourceStateNode(stateFSMnode);
-	
+
 	get_node("Label").set_text(text)
 
 func saveVisualData2Dictionary():
@@ -218,16 +218,16 @@ func ensureGraphNodesSignalsConnected():
 	for graphNode in graphNodes.get_children():
 		if(!graphNode.is_connected("arrowDragEnd", self, "_on_StateRepresentation_arrowDragEnd")):
 			graphNode.connect("arrowDragEnd", self, "_on_StateRepresentation_arrowDragEnd");
-		
+
 		if(!graphNode.is_connected("movementEnd", self, "onGraphNodeMovementEnd")):
 			graphNode.connect("movementEnd", self, "onGraphNodeMovementEnd");
-		
+
 		if(!graphNode.is_connected("doubleClick", self, "onGraphNodeDoubleClick")):
 			graphNode.connect("doubleClick", self, "onGraphNodeDoubleClick");
-		
+
 		if(!graphNode.is_connected("singleClick", self, "onGraphNodeClick")):
 			graphNode.connect("singleClick", self, "onGraphNodeClick");
-		
+
 		if(!graphNode.is_connected("connectionRemoveRequest", self, "onGraphNodeConnectionRemoveRequest")):
 			graphNode.connect("connectionRemoveRequest", self, "onGraphNodeConnectionRemoveRequest");
 
@@ -252,7 +252,7 @@ func createTransitionGraphNode(inPos, inName):
 		get_parent().hide();
 		return;
 	var fsm = fsmRef.get_ref();
-	
+
 	var newGraphNode = TransitionGraphNodeScn.instance();
 	graphNodes.add_child(newGraphNode);
 	newGraphNode.setCenterPos(inPos);
@@ -266,7 +266,7 @@ func createStateGraphNode(inPos, inName):
 		get_parent().hide();
 		return;
 	var fsm = fsmRef.get_ref();
-	
+
 	var newGraphNode = StateGraphNodeScn.instance();
 	graphNodes.add_child(newGraphNode);
 	newGraphNode.setCenterPos(inPos);
@@ -283,7 +283,7 @@ func createStateGraphAndFSMNodeAndConnect2(inStateName,inGlobalPos, createReques
 	var node = createStateGraphNode(inGlobalPos, inStateName);
 	fsm.createState(inStateName);
 	connectionRequest(createRequestFromGraphNode, graphNodes.get_node(inStateName));
-	node.set_global_pos(inGlobalPos);
+	node.set_global_position(inGlobalPos);
 
 func createStateGraphAndFSMNode(inStateName,inGlobalPos, createRequestFromGraphNode):
 	if(!fsmRef.get_ref()):
@@ -292,7 +292,7 @@ func createStateGraphAndFSMNode(inStateName,inGlobalPos, createRequestFromGraphN
 	var fsm = fsmRef.get_ref();
 	var node = createStateGraphNode(inGlobalPos, inStateName);
 	fsm.createState(inStateName);
-	node.set_global_pos(inGlobalPos);
+	node.set_global_position(inGlobalPos);
 
 func createTransitionGraphAndFSMNodeAndConnect2(inTransitionName, inGlobalPos, createRequestComesFromGraphNode, inExternalScript = null):
 	if(!fsmRef.get_ref()):
@@ -302,7 +302,7 @@ func createTransitionGraphAndFSMNodeAndConnect2(inTransitionName, inGlobalPos, c
 	var node = createTransitionGraphNode(inGlobalPos,inTransitionName);
 	fsm.createTransition(inTransitionName, inExternalScript);
 	connectionRequest(createRequestComesFromGraphNode, graphNodes.get_node(inTransitionName));
-	node.set_global_pos(inGlobalPos);
+	node.set_global_position(inGlobalPos);
 
 #func createAndConnect
 #		connectionRequest(inStateRepresentation, newGraphNode);
@@ -316,7 +316,7 @@ func saveAdditionalData():
 	var fsm = fsmRef.get_ref();
 	if(fsm==null): return;
 	for graphNode in graphNodes.get_children():
-		fsm.additionalGraphData[graphNode.get_name()] = graphNode.get_pos();
+		fsm.additionalGraphData[graphNode.get_name()] = graphNode.get_position();
 
 func restoreAdditionalData():
 	if(!fsmRef.get_ref()):
@@ -327,7 +327,7 @@ func restoreAdditionalData():
 	for graphNodeName in fsm.additionalGraphData.keys():
 		if(!graphNodes.has_node(graphNodeName)): continue;
 		var pos = fsm.additionalGraphData[graphNodeName];
-		graphNodes.get_node(graphNodeName).set_pos(pos)
+		graphNodes.get_node(graphNodeName).set_position(pos)
 #		get_node("Label").set_text("restore data: " + graphNodeName + " " +str(pos))
 
 
@@ -335,7 +335,7 @@ func toolSave2Dict():
 	var storage = {};
 	return storage;
 	for graphNode in graphNodes.get_children():
-		storage[graphNode.get_name()] = graphNode.get_pos();
+		storage[graphNode.get_name()] = graphNode.get_position();
 
 func toolLoadFromDict(inDict):
 	return
@@ -346,7 +346,7 @@ func restorePernamentData():
 	for graphNodeName in pernamentData.keys():
 		if(!graphNodes.has_node(graphNodeName)): return;
 		var pos = pernamentData[graphNodeName];
-		graphNodes.get_node(graphNodeName).set_pos(pos)
+		graphNodes.get_node(graphNodeName).set_position(pos)
 		get_node("Label").set_text("restore data: " + graphNodeName + " " +str(pos))
 
 
@@ -358,15 +358,10 @@ static func returnEmptyWeakRef():
 	var weakRef = weakref(tempObj);
 	tempObj.free()
 	return weakRef;
-	
+
 ##################################################################################
 #########                         Inner Classes                          #########
 ##################################################################################
-
-
-
-
-
 
 
 

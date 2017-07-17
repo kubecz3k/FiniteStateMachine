@@ -27,7 +27,8 @@ func _notification(what):
 	if (what == NOTIFICATION_INSTANCED):
 		pass #all internal initialization
 	elif(what == NOTIFICATION_READY):
-		pass #only parts that are dependent on outside world (on theparents etc/also called when reparented) 
+		set_process(false);
+		set_fixed_process(false);
 
 func manualInit(inFsm2Debug):
 	fsm2Debug = inFsm2Debug;

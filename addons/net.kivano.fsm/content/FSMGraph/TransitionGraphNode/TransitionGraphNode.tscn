@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=1]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/GraphNode/GraphNode.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/TransitionGraphNode/TransitionGraphNode.gd" type="Script" id=2]
@@ -7,26 +7,30 @@
 
 [node name="TransitionGraphNode" instance=ExtResource( 1 )]
 
-script/script = ExtResource( 2 )
+script = ExtResource( 2 )
+name = "onTransitionName"
 
 [node name="title" parent="."]
 
-editor/display_folded = true
-margin/left = -1.0
-margin/right = 7.0
+text = "onTransitionName"
+_sections_unfolded = [ "Anchor", "Focus", "Grow Direction", "Hint", "Margin", "Material", "Mouse", "Rect", "Size Flags", "Theme", "Visibility", "custom_colors", "custom_constants", "custom_fonts" ]
 
-[node name="Patch9Frame" parent="title"]
+[node name="NinePatchRect" parent="title"]
 
-margin/left = -14.0
-margin/top = -7.0
-margin/right = -12.0
-margin/bottom = -7.0
+margin_top = -18.0
+margin_bottom = -18.0
 texture = ExtResource( 3 )
-patch_margin/left = 30
-patch_margin/top = 30
-patch_margin/right = 30
-patch_margin/bottom = 30
+patch_margin_left = 30
+patch_margin_top = 30
+patch_margin_right = 30
+patch_margin_bottom = 30
 
 [node name="0" parent="inputSocketPositions" instance=ExtResource( 4 )]
+
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
 
 

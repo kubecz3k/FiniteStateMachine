@@ -9,13 +9,13 @@ export var automaticallyStartFollow = true;
 export var cameraDistScaling = false;
 export var minScale = 0.25;
 export var minScaleAtCamDst = 50;
-export var maxScale = 1.0; 
+export var maxScale = 1.0;
 export var maxScaleAtCamDst = 5;
 
 onready var minScaleAtCamDstSquared = minScaleAtCamDst*minScaleAtCamDst;
 onready var maxScaleAtCamDstSquared = maxScaleAtCamDst*maxScaleAtCamDst;
 var camera;
-var baseScale; 
+var baseScale;
 
 ###########Initialization
 ############################
@@ -40,7 +40,7 @@ func disableScaling():
 func startFollowing():
 	set_process(true);
 	emit_signal("onActivate");
-	
+
 func stopFollowing():
 	set_process(false);
 
@@ -50,13 +50,13 @@ func _process(delta):
 
 func updateScreenPos():
 	var posOnScreen = camera.unproject_position(get_node(followingSpatialPath).get_global_transform().origin+shift)
-	set_pos(posOnScreen)
+	set_position(posOnScreen)
 
 func updateScale():
 	var gPos = get_node(followingSpatialPath).get_global_transform().origin;
 	var camPos = camera.get_translation();
 	var currentDst2Cam = gPos.distance_squared_to(camPos);
-	
+
 	var currentScale = interpolateLinearBetween2Points(minScaleAtCamDstSquared, minScale, maxScaleAtCamDstSquared, maxScale, currentDst2Cam);
 	currentScale = max(currentScale,minScale);
 	currentScale = min(currentScale,maxScale);
@@ -67,7 +67,7 @@ func updateScale():
 ### INNER METHODS
 #	/**
 #	 *     v1+v2  (     )
-#	 * y = ------*( x-1 )+v2 
+#	 * y = ------*( x-1 )+v2
 #	 *     p1+p2  (     )
 #	 */
 static func interpolateLinearBetween2Points( inP1,  inP1Val,  inP2, inP2Val, interpolationPoint):

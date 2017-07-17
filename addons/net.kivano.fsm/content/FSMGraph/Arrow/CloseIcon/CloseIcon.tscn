@@ -119,10 +119,8 @@ playback/speed = 1.0
 blend_times = [  ]
 autoplay = ""
 
-[connection signal="mouse_enter" from="Button" to="." method="_on_Button_mouse_enter"]
+[connection signal="mouse_entered" from="Button" to="." method="_on_Button_mouse_entered"]
 
-[connection signal="mouse_exit" from="Button" to="." method="_on_Button_mouse_exit"]
+[connection signal="mouse_exited" from="Button" to="." method="_on_Button_mouse_exited"]
 
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
-
-
