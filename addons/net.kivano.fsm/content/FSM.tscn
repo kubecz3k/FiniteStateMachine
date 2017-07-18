@@ -1,10 +1,10 @@
-[gd_scene load_steps=2 format=1]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://addons/net.kivano.fsm/content/fsm.gd" type="Script" id=1]
 
 [node name="FSM" type="Node"]
 
-script/script = ExtResource( 1 )
+script = ExtResource( 1 )
 __meta__ = {
 "__editor_plugin_screen__": "Script"
 }

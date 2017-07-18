@@ -11,3 +11,27 @@ func exit(toState=null): pass
 func computeNextState():
 	return self.get_name()
 
+######### INTERNAL/PRIVATE PART ########
+var incomingSignals = [];
+
+func storeIncomingSignals():
+	incomingSignals.clear();
+	var incomingConnections = get_incoming_connections();
+	for connection in incomingConnections:
+		incomingSignals.append(SignalData.new(connection.source, connection.signal_name, connection.method_name));
+		connection.source.disconnect(connection.signal_name, self, connection.method_name);
+
+func restoreIncomingSignals():
+	for storedSignal in incomingSignals:
+		if(!storedSignal.signalSourceRef.get_ref()): continue;
+		storedSignal.signalSourceRef.get_ref().connect(storedSignal.signalName, self, storedSignal.targetFuncName);
+
+class SignalData:
+	var signalSourceRef;
+	var signalName;
+	var targetFuncName;
+	
+	func _init(inSource, inName, inTargetFunc):
+		signalSourceRef = weakref(inSource);
+		signalName = inName;
+		targetFuncName = inTargetFunc;

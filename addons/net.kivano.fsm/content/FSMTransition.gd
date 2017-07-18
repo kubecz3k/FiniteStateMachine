@@ -21,6 +21,8 @@ onready var targetStateNode;
 var timeSinceLastCheck = 0.0;
 var transAccomplished = false;
 
+var incomingSignals = [];
+
 func _ready():
 	if(!get_tree().is_editor_hint()): return;
 	initSourceStates();
@@ -88,14 +90,6 @@ func getTargetFSMState():
 	if(has_node(path2TargetState)):
 		return get_node(path2TargetState);
 
-#######
-### Public
-func accomplish():
-	transAccomplished = true;
-
-func getTargetStateID():
-	return targetStateNode.get_name(); #cant assume targetStateNode is in the tree at the moment 
-
 #rather private ones
 func fixCommonProblems():
 	if(getTargetFSMState()!=null):
@@ -111,6 +105,28 @@ func prepareTransition(inNewStateID):
 	transAccomplished = false;
 	return prepare(inNewStateID);
 
+#####
+## Signals
+func storeIncomingSignals():
+	incomingSignals.clear();
+	var incomingConnections = get_incoming_connections();
+	for connection in incomingConnections:
+		incomingSignals.append(SignalData.new(connection.source, connection.signal_name, connection.method_name));
+		connection.source.disconnect(connection.signal_name, self, connection.method_name);
+
+func restoreIncomingSignals():
+	for storedSignal in incomingSignals:
+		if(!storedSignal.signalSourceRef.get_ref()): continue;
+		storedSignal.signalSourceRef.get_ref().connect(storedSignal.signalName, self, storedSignal.targetFuncName);
+
+#######################################
+################ Public
+func accomplish():
+	transAccomplished = true;
+
+func getTargetStateID():
+	return targetStateNode.get_name(); #cant assume targetStateNode is in the tree at the moment 
+
 ######################################
 ####### Implement those below ########
 func transitionInit(inParam1=null, inParam2=null, inParam3=null, inParam4=null, inParam5=null): pass
@@ -118,3 +134,15 @@ func prepare(inNewStateID): pass
 func transitionCondition(inDeltaTime, inParam0=null, inParam1=null, inParam2=null, inParam3=null, inParam4=null): #optional params. They exist if you have pushed them in update
 	#IMPLEMENT CHECK LOGIC HERE
 	return false;
+
+### Internal classes
+#############
+class SignalData:
+	var signalSourceRef;
+	var signalName;
+	var targetFuncName;
+	
+	func _init(inSource, inName, inTargetFunc):
+		signalSourceRef = weakref(inSource);
+		signalName = inName;
+		targetFuncName = inTargetFunc;

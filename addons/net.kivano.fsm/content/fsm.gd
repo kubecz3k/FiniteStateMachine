@@ -97,6 +97,7 @@ export (NodePath) var path2LogicRoot = NodePath("..");
 export (bool) var onlyActiveStateOnTheScene = false setget setOnlyActiveStateOnScene;
 export (bool) var initManually = false;
 export (int, "Manual", "Process", "Fixed") var updateMode = UPDATE_MODE_PROCESS;
+export (bool) var receiceSignalsOnly4ActiveStatesAndTransitions = true;
 export (bool) var enableDebug = false;
 
 var stateTransitionsMap = {};
@@ -268,15 +269,25 @@ func changeStateTo(inNewStateID):
 		setState(inNewStateID);
 
 func setState(inStateID, inArg0=null,inArg1=null, inArg2=null):
-
+	
 	#
 	var prevStateID = currentStateID;
 	currentState.exit(inStateID);
 	archiveStateInHistory(prevStateID)
-
+	
 	#
+	if(receiceSignalsOnly4ActiveStatesAndTransitions):
+		var incomingConnections = currentState.get_incoming_connections();
+		for connection in incomingConnections:
+			currentState.storeIncomingSignals();
+		
+		var oldTransitions = stateTransitionsMap[prevStateID];
+		for transition in oldTransitions:
+			transition.storeIncomingSignals();
+		
+	
 	if(onlyActiveStateOnTheScene):
-
+	
 		#states
 		statesNode.remove_child(currentState);
 		statesNode.add_child(states[inStateID]);
@@ -291,6 +302,9 @@ func setState(inStateID, inArg0=null,inArg1=null, inArg2=null):
 	currentStateID = currentState.get_name()
 	ensureTransitionsForStateIDAreReady(inStateID);
 	currentState.enter(prevStateID, lastlyUsedTransitionID, inArg0, inArg1, inArg2);
+	
+	if(receiceSignalsOnly4ActiveStatesAndTransitions):
+		currentState.restoreIncomingSignals();
 
 	#
 	emit_signal("stateChanged", currentStateID, prevStateID);
@@ -302,6 +316,10 @@ func ensureTransitionsForStateIDAreReady(inStateID):
 		if(!transitionsNode.has_node(newTransition.get_name())):
 			transitionsNode.add_child(newTransition);
 		newTransition.prepareTransition(inStateID);
+		
+		if(receiceSignalsOnly4ActiveStatesAndTransitions):
+			newTransition.restoreIncomingSignals();
+	
 
 func getLogicRoot():
 	return get_node(path2LogicRoot);
