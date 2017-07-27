@@ -13,8 +13,8 @@ tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/keys = {
-"times": PoolFloatArray( 0 ),
-"transitions": PoolFloatArray( 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ Vector2( 1, 1 ) ]
 }
@@ -24,8 +24,8 @@ tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/keys = {
-"times": PoolFloatArray( 0 ),
-"transitions": PoolFloatArray( 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 1 ) ]
 }
@@ -41,8 +41,8 @@ tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/keys = {
-"times": PoolFloatArray( 0, 0.6 ),
-"transitions": PoolFloatArray( 0.25, -2.21914 ),
+"times": PoolRealArray( 0, 0.6 ),
+"transitions": PoolRealArray( 0.25, -2.21914 ),
 "update": 0,
 "values": [ Vector2( 0.9, 0.8 ), Vector2( 1, 1 ) ]
 }
@@ -52,8 +52,8 @@ tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/keys = {
-"times": PoolFloatArray( 0 ),
-"transitions": PoolFloatArray( 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ true ]
 }
@@ -63,8 +63,8 @@ tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/keys = {
-"times": PoolFloatArray( 0, 0.6 ),
-"transitions": PoolFloatArray( 0.5, 1 ),
+"times": PoolRealArray( 0, 0.6 ),
+"transitions": PoolRealArray( 0.5, 1 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
 }
@@ -80,8 +80,8 @@ tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/keys = {
-"times": PoolFloatArray( 0, 0.6 ),
-"transitions": PoolFloatArray( -2.21914, 0.25 ),
+"times": PoolRealArray( 0, 0.6 ),
+"transitions": PoolRealArray( -2.21914, 0.25 ),
 "update": 0,
 "values": [ Vector2( 1, 1 ), Vector2( 0.9, 0.8 ) ]
 }
@@ -91,8 +91,8 @@ tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/keys = {
-"times": PoolFloatArray( 0.6 ),
-"transitions": PoolFloatArray( 1 ),
+"times": PoolRealArray( 0.6 ),
+"transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ false ]
 }
@@ -102,8 +102,8 @@ tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/keys = {
-"times": PoolFloatArray( 0, 0.6 ),
-"transitions": PoolFloatArray( 0.25, 1 ),
+"times": PoolRealArray( 0, 0.6 ),
+"transitions": PoolRealArray( 0.25, 1 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }

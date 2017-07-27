@@ -14,8 +14,8 @@ tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/keys = {
-"times": PoolFloatArray( 0 ),
-"transitions": PoolFloatArray( 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ 0 ]
 }
@@ -25,8 +25,8 @@ tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/keys = {
-"times": PoolFloatArray( 0 ),
-"transitions": PoolFloatArray( 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ 0 ]
 }
@@ -36,8 +36,8 @@ tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/keys = {
-"times": PoolFloatArray( 0 ),
-"transitions": PoolFloatArray( 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ 1 ]
 }
@@ -47,8 +47,8 @@ tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/imported = false
 tracks/3/keys = {
-"times": PoolFloatArray( 0 ),
-"transitions": PoolFloatArray( 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ 1 ]
 }
@@ -58,8 +58,8 @@ tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/imported = false
 tracks/4/keys = {
-"times": PoolFloatArray( 0 ),
-"transitions": PoolFloatArray( 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ 0.0 ]
 }
@@ -69,8 +69,8 @@ tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/imported = false
 tracks/5/keys = {
-"times": PoolFloatArray( 0 ),
-"transitions": PoolFloatArray( 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ 0.0 ]
 }
@@ -80,8 +80,8 @@ tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/imported = false
 tracks/6/keys = {
-"times": PoolFloatArray( 0 ),
-"transitions": PoolFloatArray( 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ 0.0 ]
 }
