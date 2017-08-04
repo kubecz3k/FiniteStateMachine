@@ -146,7 +146,6 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 		else:
 			debugger = FSMDebuggerScn.instance();
 		add_child(debugger);
-		print("degugger script: ", debugger.get_script());
 		debugger.manualInit(self);
 
 	#

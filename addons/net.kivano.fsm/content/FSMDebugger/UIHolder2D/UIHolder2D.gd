@@ -53,7 +53,7 @@ func updateScreenPos():
 	set_position(posOnScreen)
 
 func updateScale():
-	var gPos = get_node(followingSpatialPath).get_global_transform().origin;
+	var gPos = get_node(followingSpatialPath).global_transform.origin;
 	var camPos = camera.get_translation();
 	var currentDst2Cam = gPos.distance_squared_to(camPos);
 
