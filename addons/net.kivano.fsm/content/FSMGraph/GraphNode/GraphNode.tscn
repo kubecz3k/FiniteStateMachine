@@ -6,32 +6,33 @@
 
 [node name="GraphNode" type="Control"]
 
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_right = 117.0
-margin_bottom = 31.0
+margin_bottom = 46.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 script = ExtResource( 1 )
+_sections_unfolded = [ "Rect" ]
 name = "STATE NAME"
 
 [node name="arrows" type="Control" parent="."]
 
-anchor_left = 2
-anchor_top = 2
-anchor_right = 2
-anchor_bottom = 2
-margin_left = 0.5
-margin_top = -7.5
-margin_right = 0.5
-margin_bottom = -7.5
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-_sections_unfolded = [ "Rect" ]
+_sections_unfolded = [ "Margin", "Rect" ]
 __meta__ = {
 "_edit_lock_": true
 }
@@ -45,6 +46,10 @@ end_offset = 35
 
 [node name="Control" type="Control" parent="arrows"]
 
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_left = 146.0
 margin_top = -27.0
 margin_right = 186.0
@@ -57,12 +62,12 @@ size_flags_vertical = 1
 
 [node name="title" type="Label" parent="."]
 
-anchor_right = 1
-anchor_bottom = 1
-margin_left = -26.0
-margin_top = 1.0
-margin_right = -27.0
-margin_bottom = 6.0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -29.0
+margin_right = 27.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 2
@@ -74,16 +79,19 @@ valign = 1
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
+_sections_unfolded = [ "Margin", "Rect" ]
 
 [node name="NinePatchRect" type="NinePatchRect" parent="title"]
 
 show_behind_parent = true
-anchor_right = 1
-anchor_bottom = 1
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 margin_left = -10.0
-margin_top = -13.0
-margin_right = -10.0
-margin_bottom = -13.0
+margin_top = -10.0
+margin_right = 10.0
+margin_bottom = 8.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 2
@@ -94,16 +102,16 @@ patch_margin_left = 25
 patch_margin_top = 25
 patch_margin_right = 25
 patch_margin_bottom = 25
-_sections_unfolded = [ "Anchor", "Patch Margin" ]
+_sections_unfolded = [ "Anchor", "Patch Margin", "Rect" ]
 
 [node name="inputSocketPositions" type="Control" parent="."]
 
-anchor_left = 2
-anchor_top = 2
-anchor_right = 2
-anchor_bottom = 2
-margin_left = 0.5
-margin_top = 3.5
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 1.0
+margin_top = 4.0
 margin_right = 0.5
 margin_bottom = 3.5
 rect_pivot_offset = Vector2( 0, 0 )
@@ -111,6 +119,7 @@ rect_clip_content = false
 mouse_filter = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
+_sections_unfolded = [ "Anchor", "Margin" ]
 
 [node name="TranslationFixIntervaler" type="Timer" parent="."]
 
