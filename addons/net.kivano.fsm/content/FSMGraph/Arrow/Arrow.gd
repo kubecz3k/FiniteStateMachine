@@ -146,13 +146,13 @@ func _process(delta):
 			set_target(target_node.calculateNewArrowPointPosition(self))
 		else:
 			set_target(target_node.get_global_position())
-			
+
 	if get_global_position() != cached_pos:
 		cached_pos = get_global_position()
 		update()
 
 func is_visible():
-	return not editor_only or get_tree().is_editor_hint()
+	return not editor_only or Engine.is_editor_hint()
 
 func set_start_offset(value):
 	start_offset = value

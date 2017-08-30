@@ -15,8 +15,8 @@ export (float) var intervalBetweenChecks = -1.0; #in seconds, -1 mean disable
 
 onready var fsm;
 onready var logicRoot;
-#onready var sourceStateNodes = [] 
-onready var targetStateNode; 
+#onready var sourceStateNodes = []
+onready var targetStateNode;
 
 var timeSinceLastCheck = 0.0;
 var transAccomplished = false;
@@ -24,7 +24,7 @@ var transAccomplished = false;
 var incomingSignals = [];
 
 func _ready():
-	if(!get_tree().is_editor_hint()): return;
+	if(!Engine.is_editor_hint()): return;
 	initSourceStates();
 	fixCommonProblems();
 
@@ -32,12 +32,12 @@ func manualInit(inParam1=null, inParam2=null, inParam3=null, inParam4=null, inPa
 	initSourceStates();
 	fixCommonProblems();
 	if(is_inside_tree()):
-		if(!get_tree().is_editor_hint()):
+		if(!Engine.is_editor_hint()):
 			transitionInit(inParam1, inParam2, inParam3, inParam4, inParam5);
 
 func initSourceStates():
 	if(!is_inside_tree()): return;
-	if(!get_tree().is_editor_hint()):
+	if(!Engine.is_editor_hint()):
 		fsm = get_parent().get_parent();
 		logicRoot = fsm.getLogicRoot();
 	refreshSourceNodes();
@@ -97,7 +97,7 @@ func fixCommonProblems():
 			clearTargetStateNode();
 
 func check(inDeltaTime, inParam0=null, inParam1=null, inParam2=null, inParam3=null, inParam4=null):
-	if !get_tree().is_editor_hint():
+	if !Engine.is_editor_hint():
 		if(transAccomplished): return true;
 		return transitionCondition(inDeltaTime, inParam0, inParam1, inParam2, inParam3, inParam4);
 
@@ -125,7 +125,7 @@ func accomplish():
 	transAccomplished = true;
 
 func getTargetStateID():
-	return targetStateNode.get_name(); #cant assume targetStateNode is in the tree at the moment 
+	return targetStateNode.get_name(); #cant assume targetStateNode is in the tree at the moment
 
 ######################################
 ####### Implement those below ########
@@ -141,7 +141,7 @@ class SignalData:
 	var signalSourceRef;
 	var signalName;
 	var targetFuncName;
-	
+
 	func _init(inSource, inName, inTargetFunc):
 		signalSourceRef = weakref(inSource);
 		signalName = inName;

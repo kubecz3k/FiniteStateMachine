@@ -11,13 +11,13 @@ func _enter_tree():
 
 	editorInstance = FSMGraphUIscn.instance();
 	print("Editor instance script: ", editorInstance.get_script());
-	get_editor_viewport().add_child(editorInstance);
-	get_editor_viewport().connect("resized", self, "on_resized");
+	get_editor_interface().get_editor_viewport().add_child(editorInstance);
+	get_editor_interface().get_editor_viewport().connect("resized", self, "on_resized");
 	on_resized();
 	editorInstance.connect("openScriptRequest", self, "onScriptOpenRequest");
 	editorInstance.connect("selectNodeRequest", self, "onNodeSelectRequest");
 
-	get_selection().connect("selection_changed", self, "onEditorTreeSelectionChanged");
+	get_editor_interface().get_selection().connect("selection_changed", self, "onEditorTreeSelectionChanged");
 
 func _exit_tree():
 	remove_custom_type("FSMControl")
@@ -66,7 +66,7 @@ func make_visible(visible):
 ############
 ### Signals
 func onEditorTreeSelectionChanged():
-	var selectedNodes = get_selection().get_selected_nodes()
+	var selectedNodes = get_editor_interface().get_selection().get_selected_nodes()
 	if(selectedNodes.size()!=1): return;
 	var selectedNode = selectedNodes[0];
 
@@ -82,22 +82,22 @@ func onEditorTreeSelectionChanged():
 			make_visible(false);
 
 func on_resized():
-	var viewport_size = get_editor_viewport().get_size();
+	var viewport_size = get_editor_interface().get_editor_viewport().get_size();
 	editorInstance.set_size(viewport_size);
-	editorInstance.set_global_position(get_editor_viewport().get_global_position());
+	editorInstance.set_global_position(get_editor_interface().get_editor_viewport().get_global_position());
 	editorInstance.graph.set_size(viewport_size);
 
 func onScriptOpenRequest(inNodeWithScript):
 	if(inNodeWithScript!=null) && (inNodeWithScript.get_script()!=null):
 		edit_resource(inNodeWithScript.get_script()); #load(inNodeWithScript.get_filename()));
-		var editorSelection = get_selection();
+		var editorSelection = get_editor_interface().get_selection();
 		editorSelection.clear();
 		editorSelection.add_node(inNodeWithScript);
 		make_visible(false);
 
 func onNodeSelectRequest(inNode):
 	if(inNode!=null):
-		var editorSelection = get_selection();
+		var editorSelection = get_editor_interface().get_selection();
 		editorSelection.clear();
 		editorSelection.add_node(inNode);
 

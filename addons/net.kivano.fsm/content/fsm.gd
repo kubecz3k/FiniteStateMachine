@@ -119,7 +119,7 @@ var lastlyUsedTransitionID = null;
 func _ready():
 	set_process(false);
 	set_fixed_process(false);
-	
+
 	toolInit();
 	add_to_group("FSM");
 	if(initManually):
@@ -136,7 +136,7 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 		return;
 
 	#
-	if(get_tree().is_editor_hint()): return;
+	if(Engine.is_editor_hint()): return;
 	if(get_child_count()==0): return;
 
 	if(enableDebug):
@@ -159,7 +159,7 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 		if(state2Add is preload("FSMState.gd")):
 			states[state2Add.get_name()] = state2Add;
 			STATE[state2Add.get_name()] = state2Add.get_name();
-			if(!get_tree().is_editor_hint()):
+			if(!Engine.is_editor_hint()):
 				state2Add.logicRoot = get_node(path2LogicRoot);
 				state2Add.fsm = self;
 				state2Add.stateInit(inStatesParam1,inStatesParam2,inStatesParam3,inStatesParam4, inStatesParam5);
@@ -268,25 +268,25 @@ func changeStateTo(inNewStateID):
 		setState(inNewStateID);
 
 func setState(inStateID, inArg0=null,inArg1=null, inArg2=null):
-	
+
 	#
 	var prevStateID = currentStateID;
 	currentState.exit(inStateID);
 	archiveStateInHistory(prevStateID)
-	
+
 	#
 	if(receiceSignalsOnly4ActiveStatesAndTransitions):
 		var incomingConnections = currentState.get_incoming_connections();
 		for connection in incomingConnections:
 			currentState.storeIncomingSignals();
-		
+
 		var oldTransitions = stateTransitionsMap[prevStateID];
 		for transition in oldTransitions:
 			transition.storeIncomingSignals();
-		
-	
+
+
 	if(onlyActiveStateOnTheScene):
-	
+
 		#states
 		statesNode.remove_child(currentState);
 		statesNode.add_child(states[inStateID]);
@@ -301,7 +301,7 @@ func setState(inStateID, inArg0=null,inArg1=null, inArg2=null):
 	currentStateID = currentState.get_name()
 	ensureTransitionsForStateIDAreReady(inStateID);
 	currentState.enter(prevStateID, lastlyUsedTransitionID, inArg0, inArg1, inArg2);
-	
+
 	if(receiceSignalsOnly4ActiveStatesAndTransitions):
 		currentState.restoreIncomingSignals();
 
@@ -315,10 +315,10 @@ func ensureTransitionsForStateIDAreReady(inStateID):
 		if(!transitionsNode.has_node(newTransition.get_name())):
 			transitionsNode.add_child(newTransition);
 		newTransition.prepareTransition(inStateID);
-		
+
 		if(receiceSignalsOnly4ActiveStatesAndTransitions):
 			newTransition.restoreIncomingSignals();
-	
+
 
 func getLogicRoot():
 	return get_node(path2LogicRoot);
@@ -327,7 +327,7 @@ func getStateFromID(inStateID):
 	return statesNode.get_node(inStateID);
 
 func getTransition(inID):
-	if(get_tree().is_editor_hint()): return transitionsNode.get_node(inID);  #<- not used because transition might not be in tree during runtime
+	if(Engine.is_editor_hint()): return transitionsNode.get_node(inID);  #<- not used because transition might not be in tree during runtime
 	return allTransitions[inID];
 
 #sugar
@@ -390,12 +390,12 @@ func getPrevStateFromHistory(inHowFar=0): #0 means prev
 #######
 func setInitState(inInitState):
 	initStateID = inInitState;
-	if(is_inside_tree() && get_tree().is_editor_hint() && onlyActiveStateOnTheScene):
+	if(is_inside_tree() && Engine.is_editor_hint() && onlyActiveStateOnTheScene):
 		hideAllVisibleStatesExceptInitOne();
 
 func setOnlyActiveStateOnScene(inVal):
 	onlyActiveStateOnTheScene = inVal;
-	if(is_inside_tree() && get_tree().is_editor_hint()):
+	if(is_inside_tree() && Engine.is_editor_hint()):
 		if(onlyActiveStateOnTheScene):
 			hideAllVisibleStatesExceptInitOne();
 		else:
@@ -477,7 +477,7 @@ var additionalSubDirectory4FSMData = "FSM";
 var additionalGraphData = {};
 
 func toolInit():
-	if(!get_tree().is_editor_hint()): return;
+	if(!Engine.is_editor_hint()): return;
 	initHolderNodes();
 
 #func getBaseFolderFilepath():
