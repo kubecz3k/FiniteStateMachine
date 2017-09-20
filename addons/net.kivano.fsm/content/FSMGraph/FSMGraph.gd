@@ -144,14 +144,13 @@ func onGraphNodeDoubleClick(inGraphNode):
 	if(!fsmRef.get_ref()):
 		get_parent().hide();
 		return;
-
-
-	if(inGraphNode is StateGraphNodeScript):
-		var fsmState = fsmRef.get_ref().getStateFromID(inGraphNode.get_name());
-		emit_signal("openScriptRequest", fsmState);
-	elif(inGraphNode is TransitionGraphNodeScript):
+	
+	if(inGraphNode is TransitionGraphNodeScript):
 		var fsmTransition = fsmRef.get_ref().getTransition(inGraphNode.get_name());
 		emit_signal("openScriptRequest", fsmTransition);
+	else: #State graph node
+		var fsmState = fsmRef.get_ref().getStateFromID(inGraphNode.get_name());
+		emit_signal("openScriptRequest", fsmState);
 
 func _on_FSMGraph_gui_input( ev ):
 	if(ev is InputEventMouseMotion):

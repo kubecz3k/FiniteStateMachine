@@ -89,7 +89,7 @@ func on_resized():
 
 func onScriptOpenRequest(inNodeWithScript):
 	if(inNodeWithScript!=null) && (inNodeWithScript.get_script()!=null):
-		edit_resource(inNodeWithScript.get_script()); #load(inNodeWithScript.get_filename()));
+		get_editor_interface().edit_resource(inNodeWithScript.get_script()); #load(inNodeWithScript.get_filename()));
 		var editorSelection = get_editor_interface().get_selection();
 		editorSelection.clear();
 		editorSelection.add_node(inNodeWithScript);
