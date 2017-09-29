@@ -116,6 +116,8 @@ func _draw():
 	if(getTargetNode()!=null) && (closeIcon!=null):
 #		get_node("Label").set_text(getTargetNode().get_path());
 		var middlePos = (get_global_position() + target)/2.0;
+		middlePos.x = round(middlePos.x);
+		middlePos.y = round(middlePos.y);
 		closeIcon.set_global_position(middlePos);
 	elif(closeIcon!=null):
 		closeIcon.hide();
