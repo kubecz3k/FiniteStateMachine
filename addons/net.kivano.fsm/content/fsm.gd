@@ -299,7 +299,7 @@ func setState(inStateID, inArg0=null,inArg1=null, inArg2=null):
 	stateTime = 0.0;
 	currentState = states[inStateID];
 	currentStateID = currentState.get_name()
-	ensureTransitionsForStateIDAreReady(inStateID);
+	ensureTransitionsForStateIDAreReady(inStateID, inArg0, inArg1, inArg2);
 	currentState.enter(prevStateID, lastlyUsedTransitionID, inArg0, inArg1, inArg2);
 
 	if(receiceSignalsOnly4ActiveStatesAndTransitions):
@@ -308,13 +308,13 @@ func setState(inStateID, inArg0=null,inArg1=null, inArg2=null):
 	#
 	emit_signal("stateChanged", currentStateID, prevStateID);
 
-func ensureTransitionsForStateIDAreReady(inStateID):
+func ensureTransitionsForStateIDAreReady(inStateID, inArg0 = null, inArg1 = null, inArg2 = null):
 	if(!stateTransitionsMap.has(inStateID)): return;
 	var newTransitions = stateTransitionsMap[inStateID];
 	for newTransition in newTransitions:
 		if(!transitionsNode.has_node(newTransition.get_name())):
 			transitionsNode.add_child(newTransition);
-		newTransition.prepareTransition(inStateID);
+		newTransition.prepareTransition(inStateID, inArg0, inArg1, inArg2);
 
 		if(receiceSignalsOnly4ActiveStatesAndTransitions):
 			newTransition.restoreIncomingSignals();

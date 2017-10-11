@@ -101,9 +101,9 @@ func check(inDeltaTime, inParam0=null, inParam1=null, inParam2=null, inParam3=nu
 		if(transAccomplished): return true;
 		return transitionCondition(inDeltaTime, inParam0, inParam1, inParam2, inParam3, inParam4);
 
-func prepareTransition(inNewStateID):
+func prepareTransition(inNewStateID, inArg0 = null, inArg1 = null, inArg3 = null):
 	transAccomplished = false;
-	return prepare(inNewStateID);
+	return prepare(inNewStateID, inArg0, inArg1, inArg3);
 
 #####
 ## Signals
@@ -130,7 +130,7 @@ func getTargetStateID():
 ######################################
 ####### Implement those below ########
 func transitionInit(inParam1=null, inParam2=null, inParam3=null, inParam4=null, inParam5=null): pass
-func prepare(inNewStateID): pass
+func prepare(inNewStateID, inArg0 = null, inArg1 = null, inArg2 = null): pass
 func transitionCondition(inDeltaTime, inParam0=null, inParam1=null, inParam2=null, inParam3=null, inParam4=null): #optional params. They exist if you have pushed them in update
 	#IMPLEMENT CHECK LOGIC HERE
 	return false;
