@@ -28,7 +28,7 @@ func _notification(what):
 		pass #all internal initialization
 	elif(what == NOTIFICATION_READY):
 		set_process(false);
-		set_fixed_process(false);
+		set_physics_process(false);
 
 func manualInit(inFsm2Debug):
 	fsm2Debug = inFsm2Debug;

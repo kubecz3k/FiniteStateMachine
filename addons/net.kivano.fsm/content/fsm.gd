@@ -118,7 +118,7 @@ var lastlyUsedTransitionID = null;
 ##################################################################################
 func _ready():
 	set_process(false);
-	set_fixed_process(false);
+	set_physics_process(false);
 
 	toolInit();
 	add_to_group("FSM");
@@ -200,7 +200,7 @@ func init(inStatesParam1=null, inStatesParam2=null, inStatesParam3=null, inState
 func initUpdateMode():
 	if(updateMode==UPDATE_MODE_MANUAL): return;
 	elif(updateMode==UPDATE_MODE_PROCESS): set_process(true);
-	elif(updateMode==UPDATE_MODE_FIXED_PROCESS): set_fixed_process(true);
+	elif(updateMode==UPDATE_MODE_FIXED_PROCESS): set_physics_process(true);
 
 func initTransitions(inParam1, inParam2, inParam3, inParam4, inParam5):
 	TRANSITION = {};#to be sure
@@ -453,7 +453,7 @@ func transitionReady2BeChecked(inDeltaTime, transition):
 func _process(delta):
 	update(delta);
 
-func _fixed_process(delta):
+func _physics_process(delta):
 	update(delta);
 
 ##############################################################
