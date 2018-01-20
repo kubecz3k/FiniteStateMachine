@@ -25,7 +25,7 @@ signal connectionRemoveRequest(inSource, inTarget);
 const TYPE_STATE = 1;
 const TYPE_TRANSITION = 2;
 
-export (String) var name = "STATE NAME" setget setName;
+export (String) var stateName = "STATE NAME" setget setName;
 
 onready var title = get_node("title");
 onready var dragArrow = get_node("arrows/dragArrow");

@@ -37,7 +37,8 @@ func _notification(what):
 		conditionOptions = get_node("conditionOptions");
 		conditionOptions.clear()
 		conditionOptions.add_item("New condition", 0);
-#		conditionOptions.add_item("Choose existing",1); #disabled for now, there is some nasty issue with this after 3.0 converting
+		conditionOptions.add_item("Choose existing",1);
+		pass #all internal initialization
 	elif(what == NOTIFICATION_READY):
 		hide();
 

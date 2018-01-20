@@ -367,10 +367,11 @@ func removeConnection2TransitionFromState(inStateID, inTransitionID):
 func addTransitionBetweenStatesIDs(inSourceStateID, inTargetStateID, inTransitionID):
 	#assert: you should create transition from inspector first! (don't make a lot of sense to create it from code:
 	#you will need to implement custom transition logic anyway)
-	assert transitionsNode.has_node(inTransitionID);
-	var transitionNode = transitionsNode.get_node(inTransitionID);
+	assert allTransitions.has(inTransitionID);
+	var transitionNode = allTransitions[inTransitionID];
 	transitionNode.addSourceStateNode(statesNode.get_node(inSourceStateID));
 	transitionNode.setTargetStateNode(statesNode.get_node(inTargetStateID));
+
 
 #### History
 #######
@@ -504,7 +505,7 @@ func createElement(inElementName, inHolderNode, inElementsSubfolder, inTemplateS
 	if (inElementName==null) || (inElementName.empty()) || has_node(inElementName): return;
 
 	#
-	var owner = get_owner();
+	var lowner = get_owner();
 
 	#
 	var dirMaker = Directory.new();
@@ -536,8 +537,8 @@ func createElement(inElementName, inHolderNode, inElementsSubfolder, inTemplateS
 	scn2Add.set_owner(get_tree().get_edited_scene_root());
 
 func getFolderFilepath4Element(inElementID, inElementsSubdir):
-	var owner = get_owner();
-	var dirPath = owner.get_filename().get_base_dir();
+	var lowner = get_owner();
+	var dirPath = lowner.get_filename().get_base_dir();
 	if(additionalSubDirectory4FSMData!=""):
 		dirPath = dirPath + "/" +additionalSubDirectory4FSMData + "/" + inElementsSubdir + "/" + inElementID;
 	else:
