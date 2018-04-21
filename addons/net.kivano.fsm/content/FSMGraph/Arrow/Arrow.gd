@@ -39,11 +39,12 @@ func _ready():
 	if is_visible():
 		set_process(true);
 
+	set_target_node_path(target_node_path);
+
 	if(!closeIconActive):
 		if(has_node("CloseIcon")):
 			closeIcon.queue_free();
 			closeIcon = null;
-
 
 
 func setPointingOnState(inPointingOnState):
@@ -72,13 +73,13 @@ func getTargetNode():
 func _draw():
 	if not is_visible():
 		return
-
+		
 	if target == null:
 		return
 
 	if color == null:
 		color = Color(1,1,1,1)
-
+	
 	var points = PoolVector2Array()
 	var colors = PoolColorArray()
 
@@ -134,10 +135,15 @@ func set_width(p_width):
 
 func set_target_node_path(p_target_node_path):
 	target_node_path = p_target_node_path
+	if(!is_inside_tree()): return;
+	if (target_node_path==null) || (!has_node(target_node_path)):
+		target_node_path = null;
+		target = null;
+	
 	if null == target_node_path:
 		target_node = null
 		target = null
-	else:
+	elif(has_node(target_node_path)):
 		target_node = get_node(target_node_path)
 		if target_node == null:
 			target = null

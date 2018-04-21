@@ -4,7 +4,7 @@
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/Arrow/Arrow.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/net.kivano.fsm/assets/state_9path.png" type="Texture" id=3]
 
-[node name="GraphNode" type="Control"]
+[node name="GraphNode" type="Control" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -15,13 +15,14 @@ margin_bottom = 46.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
+mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 script = ExtResource( 1 )
 _sections_unfolded = [ "Rect" ]
-name = "STATE NAME"
+stateName = "STATE NAME"
 
-[node name="arrows" type="Control" parent="."]
+[node name="arrows" type="Control" parent="." index="0"]
 
 anchor_left = 0.5
 anchor_top = 0.5
@@ -30,6 +31,7 @@ anchor_bottom = 0.5
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
+mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 _sections_unfolded = [ "Margin", "Rect" ]
@@ -37,14 +39,15 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="dragArrow" parent="arrows" instance=ExtResource( 2 )]
+[node name="dragArrow" parent="arrows" index="0" instance=ExtResource( 2 )]
 
-target_node_path = NodePath("../Control")
-target = Vector2( 200, 0 )
+visible = false
+target_node_path = null
+target = null
 closeIconActive = false
 end_offset = 35
 
-[node name="Control" type="Control" parent="arrows"]
+[node name="Control" type="Control" parent="arrows" index="1"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -57,10 +60,11 @@ margin_bottom = 13.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
+mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 
-[node name="title" type="Label" parent="."]
+[node name="title" type="Label" parent="." index="1"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -71,9 +75,10 @@ margin_right = 27.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 2
+mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 0
-text = "STATE NAME"
+text = "GraphNode"
 align = 1
 valign = 1
 percent_visible = 1.0
@@ -81,7 +86,7 @@ lines_skipped = 0
 max_lines_visible = -1
 _sections_unfolded = [ "Margin", "Rect" ]
 
-[node name="NinePatchRect" type="NinePatchRect" parent="title"]
+[node name="NinePatchRect" type="NinePatchRect" parent="title" index="0"]
 
 show_behind_parent = true
 anchor_left = 0.0
@@ -95,6 +100,7 @@ margin_bottom = 8.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 2
+mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 texture = ExtResource( 3 )
@@ -104,7 +110,7 @@ patch_margin_right = 25
 patch_margin_bottom = 25
 _sections_unfolded = [ "Anchor", "Patch Margin", "Rect" ]
 
-[node name="inputSocketPositions" type="Control" parent="."]
+[node name="inputSocketPositions" type="Control" parent="." index="2"]
 
 anchor_left = 0.5
 anchor_top = 0.5
@@ -117,11 +123,12 @@ margin_bottom = 3.5
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
+mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 _sections_unfolded = [ "Anchor", "Margin" ]
 
-[node name="TranslationFixIntervaler" type="Timer" parent="."]
+[node name="TranslationFixIntervaler" type="Timer" parent="." index="3"]
 
 process_mode = 1
 wait_time = 3.5

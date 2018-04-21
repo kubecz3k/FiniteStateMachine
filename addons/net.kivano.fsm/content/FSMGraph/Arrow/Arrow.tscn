@@ -3,7 +3,7 @@
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/Arrow/Arrow.gd" type="Script" id=1]
 [ext_resource path="res://addons/net.kivano.fsm/content/FSMGraph/Arrow/CloseIcon/CloseIcon.tscn" type="PackedScene" id=2]
 
-[node name="Arrow" type="Node2D"]
+[node name="Arrow" type="Node2D" index="0"]
 
 script = ExtResource( 1 )
 target_node_path = NodePath("")
@@ -18,7 +18,7 @@ beginningColor = Color( 0.321569, 0.611765, 0.94902, 1 )
 editor_only = false
 with_arrow = true
 
-[node name="CloseIcon" parent="." instance=ExtResource( 2 )]
+[node name="CloseIcon" parent="." index="0" instance=ExtResource( 2 )]
 
 position = Vector2( 35, 0 )
 
