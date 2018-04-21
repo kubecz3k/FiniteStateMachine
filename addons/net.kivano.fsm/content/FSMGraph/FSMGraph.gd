@@ -186,9 +186,6 @@ func connectGraphNodes(inFromNode, inTargetNode):
 	inFromNode.createNewArrowAndConnect2(inTargetNode);
 	ensureGraphNodesSignalsConnected();
 
-	var text = get_node("Label").get_text() + " a ";
-	get_node("Label").set_text(text)
-
 	if(inFromNode is TransitionGraphNodeScript):
 		if(fsm.hasTransition(inFromNode.get_name()) && fsm.hasStateWithID(inTargetNode.get_name())):
 			var transFSMnode = fsm.getTransition(inFromNode.get_name());
@@ -200,7 +197,6 @@ func connectGraphNodes(inFromNode, inTargetNode):
 			var stateFSMnode = fsm.getStateFromID(inFromNode.get_name());
 			transFSMnode.addSourceStateNode(stateFSMnode);
 
-	get_node("Label").set_text(text)
 
 func saveVisualData2Dictionary():
 	var data = {};
