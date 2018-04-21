@@ -21,6 +21,10 @@ onready var targetStateNode;
 var timeSinceLastCheck = 0.0;
 var transAccomplished = false;
 
+var stateEnterParam1 = null;
+var stateEnterParam2 = null;
+var stateEnterParam3 = null;
+
 var incomingSignals = [];
 
 func _ready():
@@ -50,6 +54,10 @@ func getAllSourceNodes():
 			if(get_node(path)!=self):
 				sourceNodes.append(get_node(path));
 	return sourceNodes;
+
+func getStateEnterParam1(): return stateEnterParam1;
+func getStateEnterParam2(): return stateEnterParam2;
+func getStateEnterParam3(): return stateEnterParam3;
 
 func refreshSourceNodes():
 	pass
@@ -103,6 +111,9 @@ func check(inDeltaTime, inParam0=null, inParam1=null, inParam2=null, inParam3=nu
 
 func prepareTransition(inNewStateID, inArg0 = null, inArg1 = null, inArg3 = null):
 	transAccomplished = false;
+	stateEnterParam1 = null;
+	stateEnterParam2 = null;
+	stateEnterParam3 = null;
 	return prepare(inNewStateID, inArg0, inArg1, inArg3);
 
 #####
@@ -121,7 +132,10 @@ func restoreIncomingSignals():
 
 #######################################
 ################ Public
-func accomplish():
+func accomplish(inStateEnterParam1 = null, inStateEnterParam2 = null, inStateEnterParam3 = null):
+	stateEnterParam1 = inStateEnterParam1;
+	stateEnterParam2 = inStateEnterParam2;
+	stateEnterParam3 = inStateEnterParam3;
 	transAccomplished = true;
 
 func getTargetStateID():

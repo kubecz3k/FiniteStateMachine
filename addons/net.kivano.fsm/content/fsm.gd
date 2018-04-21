@@ -421,7 +421,8 @@ func update(inDeltaTime, param0=null, param1=null, param2=null, param3=null, par
 	var nextStateID = checkTransitionsAndGetNextStateID(inDeltaTime, param0, param1, param2, param3, param4);
 	assert((typeof(nextStateID)==TYPE_STRING));  #ERROR: currentState.computeNextState() is not returning String!" Take a look at currentStateID variable in debugger
 	if(nextStateID!=currentStateID):
-		setState(nextStateID);
+		var transition = getTransition(lastlyUsedTransitionID);
+		setState(nextStateID, transition.getStateEnterParam1(), transition.getStateEnterParam2(), transition.getStateEnterParam3());
 
 	stateTime += inDeltaTime;
 	return currentState.update(inDeltaTime, param0, param1, param2, param3, param4);
