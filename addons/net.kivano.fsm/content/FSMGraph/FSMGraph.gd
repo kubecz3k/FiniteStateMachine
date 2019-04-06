@@ -120,7 +120,7 @@ func _on_StateRepresentation_arrowDragEnd( inFromGraphNode, inAtPos, inSlot ):
 		connectionRequest(inFromGraphNode, nearestGraphNode);
 
 func _on_StateRepresentation_connection2Empty( inStateRepresentation, inAtPos, inSlot ):
-	var newGraphNode = automaticallyCreateGraphNode(inAtPos);
+	var newGraphNode = createTransitionGraphNode(inAtPos, "Transitin node");
 	connectGraphNodes(inStateRepresentation, newGraphNode);
 
 func onGraphNodeMovementEnd(inGraphNode):

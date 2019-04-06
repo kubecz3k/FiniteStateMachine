@@ -241,15 +241,15 @@ func initHolderNodes():
 		transitionsNode.set_owner(get_tree().get_edited_scene_root());
 
 func createEmptyHolderNode():
-	if(self is Node2D):
+	var selfRef = self;
+	if(selfRef is Node2D):
 		return Node2D.new();
-	elif(self is Spatial):
+	elif(selfRef is Spatial):
 		return Spatial.new();
-	elif(self is Control):
+	elif(selfRef is Control):
 		return Control.new();
 	else:
 		return Node.new();
-
 
 ##################################################################################
 #########                       Getters and Setters                      #########
@@ -493,6 +493,22 @@ func toolInit():
 
 ############
 ### Creating States/Transitions
+func requestDelayedCall(inElementName, inTimerName, inFunctionName):
+	var creationDelayer
+	if has_node(inTimerName):
+		creationDelayer = get_node(inTimerName)
+		creationDelayer.stop()
+	else:
+		creationDelayer = Timer.new()
+		creationDelayer.set_name(inTimerName)
+		creationDelayer.one_shot = true
+		add_child(creationDelayer)
+		
+	creationDelayer.start(2.5)
+	if creationDelayer.is_connected("timeout", self, inFunctionName):
+		creationDelayer.disconnect("timeout", self, inFunctionName)
+	creationDelayer.connect("timeout", self, inFunctionName, [inElementName])
+
 func createState(inStateName):
 	createElement(inStateName, statesNode, SUBDIR_4_STATES, "res://addons/net.kivano.fsm/content/StateTemplate.gd");
 
@@ -602,10 +618,10 @@ func _set(property, value):
 		additionalSubDirectory4FSMData = value;
 		return true;
 	elif(property == INSP_CREATE_NEW_STATE):
-		createState(value);
+		requestDelayedCall(value, "stateCreateDelayer", "createState")
 		return false;
 	elif(property==INSP_CREATE_NEW_TRANSITION):
-		createTransition(value);
+		requestDelayedCall(value, "transitionCreateDelayer", "createTransition")
 		return false;
 	elif(property==INSP_INIT_STATE):
 		setInitState(value);
