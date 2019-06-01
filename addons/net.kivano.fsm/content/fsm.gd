@@ -59,8 +59,8 @@ extends Node
 #
 ################
 # * Members that are intended to be used by users:
-#    STATE: you can use this dictionary to access state id. Using is is recommended because it's less error prone than
-#        entering states ids by hand. ex. fsm.changeStateTo(fsm.STATE.START) <- when one of your states is named 'START')
+#    STATE: you can use this dictionary to access state id. Using it is recommended because it's less error prone than
+#        entering states ids by hand. ex. fsm.changeStateTo(fsm.STATE.START) <- when one of your states is named 'START'
 
 ##################################################################################
 #########                     Imported classes/scenes                    #########
