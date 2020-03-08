@@ -367,7 +367,7 @@ func removeConnection2TransitionFromState(inStateID, inTransitionID):
 func addTransitionBetweenStatesIDs(inSourceStateID, inTargetStateID, inTransitionID):
 	#assert: you should create transition from inspector first! (don't make a lot of sense to create it from code:
 	#you will need to implement custom transition logic anyway)
-	assert allTransitions.has(inTransitionID);
+	assert(allTransitions.has(inTransitionID));
 	var transitionNode = allTransitions[inTransitionID];
 	transitionNode.addSourceStateNode(statesNode.get_node(inSourceStateID));
 	transitionNode.setTargetStateNode(statesNode.get_node(inTargetStateID));
@@ -494,17 +494,19 @@ func toolInit():
 ############
 ### Creating States/Transitions
 func requestDelayedCall(inElementName, inTimerName, inFunctionName):
-	var creationDelayer
+	var creationDelayer : Timer
 	if has_node(inTimerName):
 		creationDelayer = get_node(inTimerName)
 		creationDelayer.stop()
+		creationDelayer.start(2.5)
 	else:
 		creationDelayer = Timer.new()
 		creationDelayer.set_name(inTimerName)
 		creationDelayer.one_shot = true
+		creationDelayer.wait_time = 2.5
+		creationDelayer.autostart = true
 		add_child(creationDelayer)
-		
-	creationDelayer.start(2.5)
+
 	if creationDelayer.is_connected("timeout", self, inFunctionName):
 		creationDelayer.disconnect("timeout", self, inFunctionName)
 	creationDelayer.connect("timeout", self, inFunctionName, [inElementName])
@@ -574,37 +576,37 @@ func _get_property_list():
 
 	return [
 		{
-            "hint": PROPERTY_HINT_ENUM,
-            "usage": PROPERTY_USAGE_DEFAULT,
- 			"hint_string":statesListString,
-            "name": INSP_INIT_STATE,
-            "type": TYPE_STRING
-        },
-        {
-            "hint": PROPERTY_HINT_NONE,
-            "usage": PROPERTY_USAGE_DEFAULT,
-            "name": INSP_SUBDIR_4_STATES,
-            "type": TYPE_STRING
-        },
+			"hint": PROPERTY_HINT_ENUM,
+			"usage": PROPERTY_USAGE_DEFAULT,
+			"hint_string":statesListString,
+			"name": INSP_INIT_STATE,
+			"type": TYPE_STRING
+		},
 		{
-            "hint": PROPERTY_HINT_NONE,
-            "usage": PROPERTY_USAGE_DEFAULT,
-            "name": INSP_CREATE_NEW_STATE,
-            "type": TYPE_STRING
-        },
+			"hint": PROPERTY_HINT_NONE,
+			"usage": PROPERTY_USAGE_DEFAULT,
+			"name": INSP_SUBDIR_4_STATES,
+			"type": TYPE_STRING
+		},
+		{
+			"hint": PROPERTY_HINT_NONE,
+			"usage": PROPERTY_USAGE_DEFAULT,
+			"name": INSP_CREATE_NEW_STATE,
+			"type": TYPE_STRING
+		},
 			{
-            "hint": PROPERTY_HINT_NONE,
-            "usage": PROPERTY_USAGE_DEFAULT,
-            "name": INSP_CREATE_NEW_TRANSITION,
-            "type": TYPE_STRING
-        },
-        {
-            "hint": PROPERTY_HINT_NONE,
-            "usage": PROPERTY_USAGE_STORAGE,
-            "name": GRAPH_DATA,
-            "type": TYPE_DICTIONARY
-        }
-    ];
+			"hint": PROPERTY_HINT_NONE,
+			"usage": PROPERTY_USAGE_DEFAULT,
+			"name": INSP_CREATE_NEW_TRANSITION,
+			"type": TYPE_STRING
+		},
+		{
+			"hint": PROPERTY_HINT_NONE,
+			"usage": PROPERTY_USAGE_STORAGE,
+			"name": GRAPH_DATA,
+			"type": TYPE_DICTIONARY
+		}
+	];
 func _get(property):
 	if(property == INSP_SUBDIR_4_STATES):
 		return additionalSubDirectory4FSMData;
