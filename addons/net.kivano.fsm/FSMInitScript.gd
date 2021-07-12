@@ -5,12 +5,11 @@ const FSMGraphUIscn = preload("content/FSMGraph/FSMGraphUI/FSMGraphUI.tscn");
 
 var editorInstance;
 func _enter_tree():
-	add_custom_type("FSMControl","Control", preload("content/fsm.gd"), preload("assets/icoControl.png"))
-	add_custom_type("FSM2D","Node2D", preload("content/fsm.gd"), preload("assets/ico2d.png"))
-	add_custom_type("FSM3D","Spatial", preload("content/fsm.gd"), preload("assets/ico3d.png"))
+	add_custom_type("FSMControl","Control", preload("res://addons/net.kivano.fsm/content/fsm.gd"), preload("res://addons/net.kivano.fsm/assets/icoControl.png"))
+	add_custom_type("FSM2D","Node2D", preload("res://addons/net.kivano.fsm/content/fsm.gd"), preload("res://addons/net.kivano.fsm/assets/ico2d.png"))
+	add_custom_type("FSM3D","Spatial", preload("res://addons/net.kivano.fsm/content/fsm.gd"), preload("res://addons/net.kivano.fsm/assets/ico3d.png"))
 
 	editorInstance = FSMGraphUIscn.instance();
-	print("Editor instance script: ", editorInstance.get_script());
 	get_editor_interface().get_editor_viewport().add_child(editorInstance);
 	get_editor_interface().get_editor_viewport().connect("resized", self, "on_resized");
 	on_resized();
@@ -82,6 +81,8 @@ func onEditorTreeSelectionChanged():
 			make_visible(false);
 
 func on_resized():
+	if !Engine.is_editor_hint():
+		return
 	var viewport_size = get_editor_interface().get_editor_viewport().get_size();
 	editorInstance.set_size(viewport_size);
 	editorInstance.set_global_position(get_editor_interface().get_editor_viewport().get_global_position());

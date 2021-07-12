@@ -47,7 +47,7 @@ func _input(event):
 	
 	#fast preview with alt+shift+f
 	if(event is InputEventKey):
-		if(event.is_pressed() && event.scancode==KEY_F && event.alt && event.control):
+		if(event.is_pressed() && event.scancode==KEY_F && event.alt && event.shift):
 			if(is_visible()):
 				hide();
 			else:
