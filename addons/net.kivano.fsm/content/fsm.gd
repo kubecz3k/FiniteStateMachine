@@ -1,5 +1,6 @@
 tool
 extends Node
+class_name FSM
 ##################################### README  ###############################
 # @author: Jakub Grzesik
 #
@@ -59,8 +60,8 @@ extends Node
 #
 ################
 # * Members that are intended to be used by users:
-#    STATE: you can use this dictionary to access state id. Using it is recommended because it's less error prone than
-#        entering states ids by hand. ex. fsm.changeStateTo(fsm.STATE.START) <- when one of your states is named 'START'
+#    STATE: you can use this dictionary to access state id. Using is is recommended because it's less error prone than
+#        entering states ids by hand. ex. fsm.changeStateTo(fsm.STATE.START) <- when one of your states is named 'START')
 
 ##################################################################################
 #########                     Imported classes/scenes                    #########
@@ -367,7 +368,7 @@ func removeConnection2TransitionFromState(inStateID, inTransitionID):
 func addTransitionBetweenStatesIDs(inSourceStateID, inTargetStateID, inTransitionID):
 	#assert: you should create transition from inspector first! (don't make a lot of sense to create it from code:
 	#you will need to implement custom transition logic anyway)
-	assert (allTransitions.has(inTransitionID));
+	assert(allTransitions.has(inTransitionID))
 	var transitionNode = allTransitions[inTransitionID];
 	transitionNode.addSourceStateNode(statesNode.get_node(inSourceStateID));
 	transitionNode.setTargetStateNode(statesNode.get_node(inTargetStateID));
@@ -548,7 +549,7 @@ func createElement(inElementName, inHolderNode, inElementsSubfolder, inTemplateS
 	var packedScn = PackedScene.new();
 	packedScn.pack(scnStateNode);
 	ResourceSaver.save(sceneFilePath, packedScn);
-	
+
 	var scn2Add = load(sceneFilePath).instance();
 	inHolderNode.add_child(scn2Add)
 	scn2Add.set_owner(get_tree().get_edited_scene_root());

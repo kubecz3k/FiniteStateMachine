@@ -5,11 +5,12 @@ const FSMGraphUIscn = preload("content/FSMGraph/FSMGraphUI/FSMGraphUI.tscn");
 
 var editorInstance;
 func _enter_tree():
-	add_custom_type("FSMControl","Control", preload("res://addons/net.kivano.fsm/content/fsm.gd"), preload("res://addons/net.kivano.fsm/assets/icoControl.png"))
-	add_custom_type("FSM2D","Node2D", preload("res://addons/net.kivano.fsm/content/fsm.gd"), preload("res://addons/net.kivano.fsm/assets/ico2d.png"))
-	add_custom_type("FSM3D","Spatial", preload("res://addons/net.kivano.fsm/content/fsm.gd"), preload("res://addons/net.kivano.fsm/assets/ico3d.png"))
+	add_custom_type("FSMControl","Control", load("content/fsm.gd"), preload("assets/icoControl.png"))
+	add_custom_type("FSM2D","Node2D", load("content/fsm.gd"), preload("assets/ico2d.png"))
+	add_custom_type("FSM3D","Spatial", load("content/fsm.gd"), preload("assets/ico3d.png"))
 
 	editorInstance = FSMGraphUIscn.instance();
+	print("Editor instance script: ", editorInstance.get_script());
 	get_editor_interface().get_editor_viewport().add_child(editorInstance);
 	get_editor_interface().get_editor_viewport().connect("resized", self, "on_resized");
 	on_resized();
@@ -43,13 +44,13 @@ var handlesRecentlyReturned = false;
 #implemented editor selection onEditorTreeSelectionChanged signal as a workaround
 func handles(object):
 	return false;
-	return (object is preload("content/fsm.gd"))
+	return (object is FSM)
 	if(!object is Node): return false;
 
 	var parentName = object.get_parent().get_name();
 	var isInsideFsm =  (parentName == "States") || (parentName == "Transitions") || (parentName.begins_with("FSM"));
 
-	if(object is preload("content/fsm.gd")):
+	if(object is FSM):
 		editorInstance.manualInit(object);
 		return true;
 	elif(isInsideFsm):
@@ -69,7 +70,7 @@ func onEditorTreeSelectionChanged():
 	if(selectedNodes.size()!=1): return;
 	var selectedNode = selectedNodes[0];
 
-	if(selectedNode is preload("content/fsm.gd")):
+	if(selectedNode is FSM):
 		editorInstance.manualInit(selectedNode);
 		make_visible(true);
 	elif(selectedNode.has_node("..")):
@@ -81,8 +82,6 @@ func onEditorTreeSelectionChanged():
 			make_visible(false);
 
 func on_resized():
-	if !Engine.is_editor_hint():
-		return
 	var viewport_size = get_editor_interface().get_editor_viewport().get_size();
 	editorInstance.set_size(viewport_size);
 	editorInstance.set_global_position(get_editor_interface().get_editor_viewport().get_global_position());
