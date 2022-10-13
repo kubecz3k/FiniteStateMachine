@@ -550,6 +550,11 @@ func createElement(inElementName, inHolderNode, inElementsSubfolder, inTemplateS
 	var scnStateNode = Node.new();
 	scnStateNode.set_script(script);
 	scnStateNode.set_name(inElementName);
+	if "path2SourceStates" in scnStateNode:
+		# workaround - sometimes this array is already full here,
+		# despite the fact that node has just been created and no values has been assigned yet
+		# seems like somehow script resource comes with those values?
+		scnStateNode.path2SourceStates = []
 	var packedScn = PackedScene.new();
 	packedScn.pack(scnStateNode);
 	ResourceSaver.save(sceneFilePath, packedScn);
