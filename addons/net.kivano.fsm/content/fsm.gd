@@ -494,7 +494,7 @@ func toolInit():
 ############
 ### Creating States/Transitions
 func requestDelayedCall(inElementName, inTimerName, inFunctionName):
-	var creationDelayer
+	var creationDelayer: Timer
 	if has_node(inTimerName):
 		creationDelayer = get_node(inTimerName)
 		creationDelayer.stop()
@@ -503,8 +503,13 @@ func requestDelayedCall(inElementName, inTimerName, inFunctionName):
 		creationDelayer.set_name(inTimerName)
 		creationDelayer.one_shot = true
 		add_child(creationDelayer)
-		
-	creationDelayer.start(2.5)
+	
+	if creationDelayer.is_inside_tree():
+		creationDelayer.start(2.5)
+	else:
+		creationDelayer.wait_time = 2.5;
+		creationDelayer.autostart = true;
+	
 	if creationDelayer.is_connected("timeout", self, inFunctionName):
 		creationDelayer.disconnect("timeout", self, inFunctionName)
 	creationDelayer.connect("timeout", self, inFunctionName, [inElementName])
@@ -566,6 +571,8 @@ func getFolderFilepath4Element(inElementID, inElementsSubdir):
 ############
 #### properties
 func _get_property_list():
+	if !is_instance_valid(statesNode):
+		return []
 	var currentStatesList = statesNode.get_children();
 	var statesListString = "";
 	for state in currentStatesList:
