@@ -125,7 +125,6 @@ func _on_StateRepresentation_connection2Empty( inStateRepresentation, inAtPos, i
 
 func onGraphNodeMovementEnd(inGraphNode):
 	saveAdditionalData();
-#	get_node("Label").set_text("Saving data");
 
 func onGraphNodeClick(inGraphNode):
 	if(!fsmRef.get_ref()):
@@ -164,7 +163,6 @@ func onGraphNodeConnectionRemoveRequest(inSourceGraphNode, inTargetGraphNode):
 		get_parent().hide();
 		return;
 
-	get_node("Label").set_text("inTargetGraphNode: " + inTargetGraphNode.get_name());
 	if(inSourceGraphNode.baseType==GraphNodeScript.TYPE_TRANSITION):
 		fsmRef.get_ref().removeTargetConnection4TransitionID(inSourceGraphNode.get_name());
 	elif(inTargetGraphNode.baseType==GraphNodeScript.TYPE_TRANSITION):
@@ -228,11 +226,10 @@ func ensureGraphNodesSignalsConnected():
 
 
 func connectionRequest(inSourceNodegraph, inTargetNodeGraph):
-	var text = get_node("Label").get_text() + " a ";
 	if(inSourceNodegraph.baseType == inTargetNodeGraph.inputConnectionType):
 		if(inSourceNodegraph.canConnect2AnotherNode() && inTargetNodeGraph.isAcceptingIncomingConnections()):
 			connectGraphNodes(inSourceNodegraph, inTargetNodeGraph);
-	get_node("Label").set_text(text)
+
 
 #############
 ### Graph node creation
@@ -323,7 +320,6 @@ func restoreAdditionalData():
 		if(!graphNodes.has_node(graphNodeName)): continue;
 		var pos = fsm.additionalGraphData[graphNodeName];
 		graphNodes.get_node(graphNodeName).set_position(pos)
-#		get_node("Label").set_text("restore data: " + graphNodeName + " " +str(pos))
 
 
 func toolSave2Dict():
@@ -342,7 +338,6 @@ func restorePernamentData():
 		if(!graphNodes.has_node(graphNodeName)): return;
 		var pos = pernamentData[graphNodeName];
 		graphNodes.get_node(graphNodeName).set_position(pos)
-		get_node("Label").set_text("restore data: " + graphNodeName + " " +str(pos))
 
 
 
